@@ -22,6 +22,7 @@ The workspace is managed using pnpm workspaces defined in `pnpm-workspace.yaml`.
 pnpm install                        # Install all dependencies
 pnpm dev:api                        # Start API in watch mode (port 3000)
 pnpm dev:ui                         # Start UI dev server with HMR
+pnpm test                           # Run all tests with Vitest
 ```
 
 ### API (NestJS Backend)
@@ -49,6 +50,33 @@ pnpm --filter ui preview            # Preview production build
 pnpm --filter ui lint               # Lint with ESLint
 ```
 
+### Testing
+Run from root:
+```bash
+pnpm test                           # Run all tests (both UI and API)
+pnpm test:ui                        # Run only UI tests
+pnpm test:api                       # Run only API tests
+pnpm test:coverage                  # Run tests with coverage
+```
+
+Each workspace has its own `vitest.config.ts`:
+- **UI** (`apps/ui/vitest.config.ts`): Uses jsdom environment for React components
+- **API** (`apps/api/vitest.config.ts`): Uses node environment for backend code
+
+**WebStorm Configuration:**
+Create separate Vitest run configurations for each workspace:
+1. Go to `Run → Edit Configurations → + → Vitest`
+2. For UI tests:
+   - Name: `UI Tests`
+   - Working directory: `/Users/omejia/Documents/Claude Training/quizzes/apps/ui`
+   - Vitest config: `vitest.config.ts`
+3. For API tests:
+   - Name: `API Tests`
+   - Working directory: `/Users/omejia/Documents/Claude Training/quizzes/apps/api`
+   - Vitest config: `vitest.config.ts`
+
+Legacy Jest configuration remains in API for NestJS default tests (use `pnpm --filter api test:jest`).
+
 ### Building for Production
 ```bash
 pnpm build:api                      # Build API
@@ -61,7 +89,7 @@ pnpm build:ui                       # Build UI (includes TypeScript check)
 - Standard NestJS module-based architecture
 - Entry point: `apps/api/src/main.ts`
 - Root module: `apps/api/src/app.module.ts`
-- Jest configured for unit tests with ts-jest
+- Vitest configured for testing (Jest still available via `test:jest` scripts)
 - Test files use `.spec.ts` suffix
 - Data persistence will store quiz content, user scores, and attempt history
 
@@ -71,6 +99,9 @@ pnpm build:ui                       # Build UI (includes TypeScript check)
 - Tailwind CSS v4 for styling (configured via `@tailwindcss/vite` plugin)
 - Entry point: `apps/ui/src/main.tsx`
 - Uses TypeScript with separate tsconfig for app and node code
+- Vitest for testing with `@testing-library/react`
+- Test setup: `apps/ui/src/test/setup.ts`
+- Test files use `.test.tsx` or `.test.ts` suffix
 
 ### Application Flow
 - Users select quiz categories from the home page
