@@ -8,7 +8,7 @@ argument-hint: name | folder-path | specifications
 Parse $ARGUMENTS to get the component name and specifications.
 
 - [name]: The name of the component converted to PascalCase to be created. Take it from $ARGUMENTS.
-- [folder-path]: The path where the component should be created (default: `src/components`). Take it from $ARGUMENTS.
+- [folder-path]: The path where the component should be created (default: `apps/ui/src/components/`). Take it from $ARGUMENTS.
 - [specifications]: A brief description of the component's functionality and requirements. Take it from $ARGUMENTS.
 
 ## Task
