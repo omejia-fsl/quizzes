@@ -2,6 +2,7 @@
   "name": "quizzes",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev:api": "pnpm --filter api start:dev",
@@ -18,6 +19,8 @@
     "test:packages:watch": "vitest --project shared-models --project shared-types --project shared-utils",
     "test:coverage": "vitest run --coverage",
     "test:vitest-ui": "vitest --ui",
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"**/*.{ts,tsx}\" --fix",
     "format": "prettier --write \"**/*.{ts,tsx,json,css,html}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,css,html}\""
   },

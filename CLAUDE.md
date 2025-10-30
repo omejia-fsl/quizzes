@@ -8,10 +8,22 @@ This is an AI Development Quiz App — an educational platform for testing knowl
 
 ## Project Structure
 
-This is a pnpm monorepo workspace with two applications:
+This is a pnpm monorepo workspace with the following structure:
 
+**Applications:**
 - `apps/api`: NestJS backend API (TypeScript) — handles quiz data, user progress, and scoring
 - `apps/ui`: React + Vite frontend (TypeScript, SWC, Tailwind CSS) — quiz interface and user dashboard
+
+**Shared Packages:**
+- `packages/shared-models`: Zod schemas and type definitions for data models (auth, user, etc.)
+- `packages/shared-types`: Shared TypeScript types and query keys for React Query
+- `packages/shared-utils`: Shared utility functions and helpers
+
+**Build Output:**
+All compiled code outputs to a centralized `/dist` folder at the root:
+- `/dist/api` - NestJS compiled output
+- `/dist/ui` - Vite production build
+- `/dist/shared-*` - Compiled shared packages
 
 The workspace is managed using pnpm workspaces defined in `pnpm-workspace.yaml`. Dependencies are shared at the root level where possible.
 
@@ -56,8 +68,12 @@ This project uses Vitest with a workspace/projects configuration for the monorep
 
 **Test Structure:**
 - Root `vitest.config.ts` defines projects and global settings (coverage, reporters)
-- `apps/ui/vitest.config.ts`: UI project (React, jsdom environment, `.test.{ts,tsx}` files)
-- `apps/api/vitest.config.ts`: API project (NestJS, node environment, `.spec.{ts,tsx}` files)
+- Each app/package has its own `vitest.config.ts`:
+  - `apps/ui`: React tests, jsdom environment, `.test.{ts,tsx}` files
+  - `apps/api`: NestJS tests, node environment, `.spec.{ts,tsx}` files
+  - `packages/shared-models`: Node environment, `.test.{ts,tsx}` files
+  - `packages/shared-types`: Node environment, `.test.{ts,tsx}` files
+  - `packages/shared-utils`: Node environment, `.test.{ts,tsx}` files
 
 **Running Tests:**
 
@@ -69,33 +85,47 @@ pnpm test:ui                        # Run only UI tests
 pnpm test:ui:watch                  # Run UI tests in watch mode
 pnpm test:api                       # Run only API tests
 pnpm test:api:watch                 # Run API tests in watch mode
+pnpm test:packages                  # Run all package tests (shared-*)
+pnpm test:packages:watch            # Run package tests in watch mode
 pnpm test:coverage                  # Run all tests with unified coverage report
 pnpm test:vitest-ui                 # Open Vitest UI for all projects
 ```
 
 **Project Filtering:**
 
-You can filter tests by project using the `--project` flag:
+The root vitest config uses glob patterns for projects: `./apps/*` and `./packages/*`. You can filter tests by project name:
 ```bash
 vitest --project ui                 # Run only UI tests
 vitest --project api                # Run only API tests
-vitest --project ui --project api   # Run both UI and API tests
+vitest --project shared-models      # Run only shared-models tests
 ```
 
-**WebStorm/IDE Configuration:**
+### Linting and Formatting
 
-Configure Vitest to use the root config file:
-1. Go to `Run → Edit Configurations → + → Vitest`
-2. Set working directory to: `/Users/omejia/Documents/Claude Training/quizzes`
-3. Set Vitest config: `vitest.config.ts`
-4. (Optional) Use `--project <name>` in additional arguments to filter projects
+**Linting:**
+```bash
+pnpm lint                           # Lint all TS/TSX files
+pnpm lint:fix                       # Lint and auto-fix issues
+```
 
-Legacy Jest configuration remains in API for NestJS default tests (use `pnpm --filter api test:jest`).
+ESLint is configured in `eslint.config.js` (ESLint v9 flat config) with TypeScript, React Hooks, and Prettier integration. The configuration:
+- Uses TypeScript ESLint parser with project service
+- Enforces React Hooks rules
+- Integrates with Prettier for formatting rules
+- Ignores `dist` folder
+
+**Formatting:**
+```bash
+pnpm format                         # Format all TS, TSX, JSON, CSS, HTML files
+pnpm format:check                   # Check formatting without modifying files
+```
+
+Prettier is configured in `.prettierrc` with single quotes, trailing commas, and semicolons. The `.prettierignore` excludes `node_modules`, `dist`, and other build artifacts.
 
 ### Building for Production
 ```bash
-pnpm build:api                      # Build API
-pnpm build:ui                       # Build UI (includes TypeScript check)
+pnpm build:api                      # Build API to /dist/api
+pnpm build:ui                       # Build UI to /dist/ui (includes TypeScript check)
 ```
 
 ## Architecture
@@ -104,8 +134,9 @@ pnpm build:ui                       # Build UI (includes TypeScript check)
 - Standard NestJS module-based architecture
 - Entry point: `apps/api/src/main.ts`
 - Root module: `apps/api/src/app.module.ts`
-- Vitest configured for testing (Jest still available via `test:jest` scripts)
+- Vitest configured for testing (Jest configuration still present but Vitest is preferred)
 - Test files use `.spec.ts` suffix
+- Outputs to `/dist/api` (configured in tsconfig.json and nest-cli.json)
 - Data persistence will store quiz content, user scores, and attempt history
 
 ### Frontend (React + Vite)
@@ -113,10 +144,19 @@ pnpm build:ui                       # Build UI (includes TypeScript check)
 - React 19 with StrictMode enabled
 - Tailwind CSS v4 for styling (configured via `@tailwindcss/vite` plugin)
 - Entry point: `apps/ui/src/main.tsx`
-- Uses TypeScript with separate tsconfig for app and node code
+- Uses TypeScript with separate tsconfigs:
+  - `tsconfig.app.json` for application code (bundler mode)
+  - `tsconfig.node.json` for Vite config
 - Vitest for testing with `@testing-library/react`
-- Test setup: `apps/ui/src/test/setup.ts`
+- Test setup: `apps/ui/vitest.setup.ts`
 - Test files use `.test.tsx` or `.test.ts` suffix
+- Outputs to `/dist/ui` (configured in vite.config.ts)
+
+### Shared Packages Architecture
+- **Type Safety**: All packages use TypeScript with strict mode enabled
+- **Path Aliases**: Packages can be imported using `@quiz-app/shared-*` aliases (configured in root tsconfig.json)
+- **Compilation**: Each package has its own tsconfig.json that extends the root config
+- **Module System**: Packages use NodeNext module resolution for compatibility
 
 ### Application Flow
 - Users select quiz categories from the home page
@@ -129,4 +169,16 @@ pnpm build:ui                       # Build UI (includes TypeScript check)
 - Uses pnpm as the package manager (version 10.10.0)
 - Always use `pnpm` commands, not `npm` or `yarn`
 - Use `--filter <package-name>` to run commands in specific workspaces from root
-- In the `features/` folder will be located the different planned features and how they will be executed or was executed for the project.
+- Workspace packages defined in `pnpm-workspace.yaml`: `apps/*` and `packages/**/*`
+
+## Feature Development Process
+The `features/` folder contains structured feature documentation with step-by-step implementation guides. Each feature folder includes:
+- Step files (e.g., `step-0-shared-packages-setup.md`)
+- README.md with feature overview
+- QUICK-START.md and UPDATES.md for context
+
+**Custom Commands:**
+- `/execute-feature-step <feature-folder-path> <step-number>` - Execute a specific feature step
+- `/ui-component <name> <folder-path> <specifications>` - Create a reusable React component with tests
+
+Use these commands to follow the structured development workflow defined in feature documentation.
