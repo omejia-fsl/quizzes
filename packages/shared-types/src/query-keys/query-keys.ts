@@ -25,5 +25,6 @@ export const createQueryKey = {
   userById: (id: string) => [QueryKeys.USER_BY_ID, id] as const,
   quizById: (id: string) => [QueryKeys.QUIZ_BY_ID, id] as const,
   attemptById: (id: string) => [QueryKeys.ATTEMPT_BY_ID, id] as const,
-  leaderboardByQuiz: (quizId: string) => [QueryKeys.LEADERBOARD_BY_QUIZ, quizId] as const,
-}
+  leaderboardByQuiz: (quizId: string) =>
+    [QueryKeys.LEADERBOARD_BY_QUIZ, quizId] as const,
+};

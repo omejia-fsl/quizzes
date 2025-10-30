@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "outDir": "../../dist/shared-utils",
+    "rootDir": ".",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

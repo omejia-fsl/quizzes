@@ -24,7 +24,7 @@ export const Avatar = ({
   src,
   name,
   size = 'md',
-  variant = 'primary'
+  variant = 'primary',
 }: AvatarProps) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);

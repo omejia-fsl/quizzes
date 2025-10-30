@@ -7,10 +7,7 @@ export default defineProject({
     name: 'ui',
     environment: 'jsdom',
     setupFiles: './vitest.setup.ts',
-    include: [
-      'src/**/__tests__/**/*.test.{ts,tsx}',
-      'src/**/*.test.{ts,tsx}',
-    ],
+    include: ['src/**/__tests__/**/*.test.{ts,tsx}', 'src/**/*.test.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',

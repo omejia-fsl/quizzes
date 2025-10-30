@@ -2,12 +2,12 @@ import { defineProject } from 'vitest/config';
 
 export default defineProject({
   test: {
-    name: 'api',
+    name: 'shared-types',
     environment: 'node',
     include: [
       'src/**/__tests__/**/*.test.{ts,tsx}',
       'src/**/*.test.{ts,tsx}',
-      'test/**/*.test.{ts,tsx}',
+      '**/*.test.{ts,tsx}',
     ],
     exclude: [
       '**/node_modules/**',

@@ -9,7 +9,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       reportsDirectory: './coverage',
-      include: ['apps/*/src/**/*.{ts,tsx}'],
+      include: ['apps/*/src/**/*.{ts,tsx}', 'packages/*/src/**/*.{ts,tsx}'],
       exclude: [
         '**/node_modules/**',
         '**/dist/**',
@@ -19,8 +19,8 @@ export default defineConfig({
       ],
     },
     projects: [
-      './apps/api',
-      './apps/ui',
+      './apps/*',
+      './packages/*',
     ],
   },
 });

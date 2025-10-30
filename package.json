@@ -14,8 +14,12 @@
     "test:ui:watch": "vitest --project ui",
     "test:api": "vitest run --project api",
     "test:api:watch": "vitest --project api",
+    "test:packages": "vitest run --project shared-models --project shared-types --project shared-utils",
+    "test:packages:watch": "vitest --project shared-models --project shared-types --project shared-utils",
     "test:coverage": "vitest run --coverage",
-    "test:vitest-ui": "vitest --ui"
+    "test:vitest-ui": "vitest --ui",
+    "format": "prettier --write \"**/*.{ts,tsx,json,css,html}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,json,css,html}\""
   },
   "keywords": [],
   "author": "",
