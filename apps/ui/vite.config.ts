@@ -7,7 +7,7 @@ import path from 'path';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
-    outDir: '../../dist/ui',
+    outDir: './dist',
     emptyOutDir: true,
   },
   resolve: {
