@@ -12,17 +12,17 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@quiz-app/shared-models': path.resolve(
+      '@quiz-app/shared-models/*': path.resolve(
         __dirname,
-        '../../packages/shared-models',
+        '../../packages/shared-models/src',
       ),
-      '@quiz-app/shared-types': path.resolve(
+      '@quiz-app/shared-types/*': path.resolve(
         __dirname,
-        '../../packages/shared-types',
+        '../../packages/shared-types/src',
       ),
-      '@quiz-app/shared-utils': path.resolve(
+      '@quiz-app/shared-utils/*': path.resolve(
         __dirname,
-        '../../packages/shared-utils',
+        '../../packages/shared-utils/src',
       ),
     },
   },

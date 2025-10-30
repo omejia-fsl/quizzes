@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { SafeUserSchema } from '../user/user.model';
 
 export const LoginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -17,7 +17,7 @@ export const RegisterSchema = z.object({
       /^[a-zA-Z0-9_]+$/,
       'Username can only contain letters, numbers, and underscores',
     ),
-  email: z.string().email('Invalid email address'),
+  email: z.email('Invalid email address'),
   password: z
     .string()
     .min(6, 'Password must be at least 6 characters')
@@ -35,7 +35,7 @@ export type AuthResponse = z.infer<typeof AuthResponseSchema>;
 
 export const JwtPayloadSchema = z.object({
   sub: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   username: z.string(),
   iat: z.number().optional(),
   exp: z.number().optional(),

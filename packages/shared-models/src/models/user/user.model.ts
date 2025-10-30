@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const UserSchema = z.object({
   id: z.string(),
   username: z.string().min(3).max(20),
-  email: z.string().email(),
+  email: z.email(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -12,7 +12,7 @@ export type User = z.infer<typeof UserSchema>;
 
 export const CreateUserSchema = z.object({
   username: z.string().min(3).max(20),
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(6).max(100),
 });
 

@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "NodeNext",
     "outDir": "../../dist/shared-types",
     "rootDir": ".",
     "composite": true,
