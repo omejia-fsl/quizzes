@@ -1,9 +1,9 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
-    "esModuleInterop": true,
     "isolatedModules": true,
     "declaration": true,
     "removeComments": true,
@@ -13,13 +13,23 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "rootDir": "./src",
+    "baseUrl": "../../",
     "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@quiz-app/shared-models": ["packages/shared-models"],
+      "@quiz-app/shared-models/*": ["packages/shared-models/*"],
+      "@quiz-app/shared-types": ["packages/shared-types"],
+      "@quiz-app/shared-types/*": ["packages/shared-types/*"],
+      "@quiz-app/shared-utils": ["packages/shared-utils"],
+      "@quiz-app/shared-utils/*": ["packages/shared-utils/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

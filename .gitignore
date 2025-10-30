@@ -30,6 +30,7 @@ dist-ssr
 /dist
 /node_modules
 /build
+*.tsbuildinfo
 
 # Tests
 /coverage
