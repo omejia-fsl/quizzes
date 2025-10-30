@@ -51,29 +51,44 @@ pnpm --filter ui lint               # Lint with ESLint
 ```
 
 ### Testing
-Run from root:
+
+This project uses Vitest with a workspace/projects configuration for the monorepo.
+
+**Test Structure:**
+- Root `vitest.config.ts` defines projects and global settings (coverage, reporters)
+- `apps/ui/vitest.config.ts`: UI project (React, jsdom environment, `.test.{ts,tsx}` files)
+- `apps/api/vitest.config.ts`: API project (NestJS, node environment, `.spec.{ts,tsx}` files)
+
+**Running Tests:**
+
+From root directory:
 ```bash
-pnpm test                           # Run all tests (both UI and API)
+pnpm test                           # Run all tests in all projects
+pnpm test:watch                     # Run all tests in watch mode
 pnpm test:ui                        # Run only UI tests
+pnpm test:ui:watch                  # Run UI tests in watch mode
 pnpm test:api                       # Run only API tests
-pnpm test:coverage                  # Run tests with coverage
+pnpm test:api:watch                 # Run API tests in watch mode
+pnpm test:coverage                  # Run all tests with unified coverage report
+pnpm test:vitest-ui                 # Open Vitest UI for all projects
 ```
 
-Each workspace has its own `vitest.config.ts`:
-- **UI** (`apps/ui/vitest.config.ts`): Uses jsdom environment for React components
-- **API** (`apps/api/vitest.config.ts`): Uses node environment for backend code
+**Project Filtering:**
 
-**WebStorm Configuration:**
-Create separate Vitest run configurations for each workspace:
+You can filter tests by project using the `--project` flag:
+```bash
+vitest --project ui                 # Run only UI tests
+vitest --project api                # Run only API tests
+vitest --project ui --project api   # Run both UI and API tests
+```
+
+**WebStorm/IDE Configuration:**
+
+Configure Vitest to use the root config file:
 1. Go to `Run → Edit Configurations → + → Vitest`
-2. For UI tests:
-   - Name: `UI Tests`
-   - Working directory: `/Users/omejia/Documents/Claude Training/quizzes/apps/ui`
-   - Vitest config: `vitest.config.ts`
-3. For API tests:
-   - Name: `API Tests`
-   - Working directory: `/Users/omejia/Documents/Claude Training/quizzes/apps/api`
-   - Vitest config: `vitest.config.ts`
+2. Set working directory to: `/Users/omejia/Documents/Claude Training/quizzes`
+3. Set Vitest config: `vitest.config.ts`
+4. (Optional) Use `--project <name>` in additional arguments to filter projects
 
 Legacy Jest configuration remains in API for NestJS default tests (use `pnpm --filter api test:jest`).
 

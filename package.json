@@ -8,10 +8,14 @@
     "dev:ui": "pnpm --filter ui dev",
     "build:api": "pnpm --filter api build",
     "build:ui": "pnpm --filter ui build",
-    "test": "pnpm -r --parallel run test",
-    "test:ui": "pnpm --filter ui test",
-    "test:api": "pnpm --filter api test",
-    "test:coverage": "pnpm -r --parallel run test:coverage"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest run --project ui",
+    "test:ui:watch": "vitest --project ui",
+    "test:api": "vitest run --project api",
+    "test:api:watch": "vitest --project api",
+    "test:coverage": "vitest run --coverage",
+    "test:vitest-ui": "vitest --ui"
   },
   "keywords": [],
   "author": "",

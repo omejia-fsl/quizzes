@@ -1,28 +1,18 @@
-import { defineConfig } from 'vitest/config';
+import { defineProject } from 'vitest/config';
 
-export default defineConfig({
+export default defineProject({
   test: {
-    globals: true,
+    name: 'api',
     environment: 'node',
-    passWithNoTests: true,
     include: [
-      'src/**/__tests__/**/*.spec.{ts,tsx}',
-      'src/**/*.spec.{ts,tsx}',
-      'test/**/*.spec.{ts,tsx}',
+      'src/**/__tests__/**/*.test.{ts,tsx}',
+      'src/**/*.test.{ts,tsx}',
+      'test/**/*.test.{ts,tsx}',
     ],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
       '**/.{idea,git,cache,output,temp}/**',
     ],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      include: ['src/**/*.ts'],
-      exclude: [
-        'src/**/*.spec.ts',
-        'src/**/__tests__/**',
-      ],
-    },
   },
 });
