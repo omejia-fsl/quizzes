@@ -6,8 +6,7 @@ export function useApiTest() {
     queryKey: ['api-test'],
     queryFn: async () => {
       try {
-        const data = await api.get<{ message: string }>('/health');
-        return data;
+        return await api.get<{ message: string }>('/health');
       } catch (error) {
         console.log('API test (expected to fail):', error);
         return { message: 'API service is configured (backend not ready yet)' };
