@@ -22,6 +22,14 @@ Execute the specified step in the feature development process.
 - Ask for clarification if any part of the step is unclear or if additional information is needed.
 - Ask for run the next step only after confirming the current step is completed successfully.
 
+## Documentation
+
+- Use context7 to access to the documentation related to some library or framework if needed.
+- Refer to the feature documentation located in [feature-folder-path] for specific instructions related to the step.
+- If there is no specific documentation for the step, follow general best practices for feature development.
+- If you find something unclear in the documentation, ask for clarification before proceeding.
+- If in the feature step has something bad documented, point it out and suggest improvements, also update the step documentation if possible.
+
 ## Verification
 
 - After completing the step, verify that all tasks have been accomplished as per the feature documentation.
