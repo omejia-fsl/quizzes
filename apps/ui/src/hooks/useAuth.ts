@@ -1,4 +1,4 @@
-import { useAuthStore } from '../stores/authStore';
+import { useAuthStore } from '../stores/authStore.ts';
 
 export function useAuth() {
   const user = useAuthStore((state) => state.user);

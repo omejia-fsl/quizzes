@@ -10,12 +10,13 @@ export interface ApiResponse<T> {
 }
 
 export class ApiRequestError extends Error {
-  constructor(
-    message: string,
-    public statusCode: number,
-    public error?: string,
-  ) {
+  statusCode: number;
+  error?: string;
+
+  constructor(message: string, statusCode: number, error?: string) {
     super(message);
     this.name = 'ApiRequestError';
+    this.statusCode = statusCode;
+    this.error = error;
   }
 }

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../shared/lib/api';
+import { api } from '../api/api.ts';
 
 export function useApiTest() {
   return useQuery({

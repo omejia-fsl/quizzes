@@ -7,10 +7,9 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['**/node_modules/**', '**/dist/**', '**/*.config.js', '**/*.config.json', '**/routeTree.gen.ts', '**/.tanstack/**']),
   {
     files: ['**/*.{ts,tsx}'],
-    ignores: ['**/node_modules/**', '**/dist/**', '**/*.config.js', '**/*.config.json', '**/routeTree.gen.ts'],
     extends: [
       eslint.configs.recommended,
       tseslint.configs.recommended,

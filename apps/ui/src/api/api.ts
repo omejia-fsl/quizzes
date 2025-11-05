@@ -1,4 +1,4 @@
-import { ApiRequestError } from '../types/api';
+import { ApiRequestError } from './types.ts';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 

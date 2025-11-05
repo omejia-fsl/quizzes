@@ -3,9 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from '@tanstack/react-router';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { router } from './lib/router';
-import { queryClient } from './lib/queryClient';
-import { useThemeStore } from './shared/stores/themeStore';
+import { router } from './routes/router.ts';
+import { queryClient } from './api/queryClient.ts';
+import { useThemeStore } from './stores/themeStore';
 import './index.css';
 
 useThemeStore.getState().initTheme();
