@@ -12,9 +12,9 @@ export async function apiRequest<T = unknown>(
 ): Promise<T> {
   const { skipAuth = false, headers, ...restOptions } = options;
 
-  const requestHeaders: HeadersInit = {
+  const requestHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...headers,
+    ...(headers as Record<string, string>),
   };
 
   if (!skipAuth) {
@@ -49,8 +49,7 @@ export async function apiRequest<T = unknown>(
       return undefined as T;
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     if (error instanceof ApiRequestError) {
       throw error;
@@ -70,8 +69,7 @@ export async function apiRequest<T = unknown>(
 
 function getAuthToken(): string | null {
   try {
-    const token = localStorage.getItem('auth_token');
-    return token;
+    return localStorage.getItem('auth_token');
   } catch {
     return null;
   }
