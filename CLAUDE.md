@@ -182,3 +182,6 @@ The `features/` folder contains structured feature documentation with step-by-st
 - `/ui-component <name> <folder-path> <specifications>` - Create a reusable React component with tests
 
 Use these commands to follow the structured development workflow defined in feature documentation.
+
+## Project Conventions
+- In the app the created components should be arrow function components, not function or class components

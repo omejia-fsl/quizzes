@@ -1,11 +1,13 @@
 import { Link } from '@tanstack/react-router';
-import { Menu, X, User } from 'lucide-react';
+import { Menu, X, User, Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
+import { useTheme } from '../../hooks/useTheme.ts';
 
-export function Navbar() {
+export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
 
   const navLinks = [
     { to: '/', label: 'Home' },
@@ -14,7 +16,7 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+    <nav className="h-16 border-b border-slate-200 dark:border-slate-800 bg-stone-50 dark:bg-slate-900">
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         <Link
           to="/"
@@ -39,7 +41,17 @@ export function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <div className="w-10 h-10 flex items-center justify-center"></div>
+          <button
+            onClick={toggleTheme}
+            className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            aria-label="Toggle dark mode"
+          >
+            {isDark ? (
+              <Sun className="w-5 h-5 text-yellow-500" />
+            ) : (
+              <Moon className="w-5 h-5 text-slate-700" />
+            )}
+          </button>
 
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
@@ -82,8 +94,23 @@ export function Navbar() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-stone-50 dark:bg-slate-900">
           <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
+            <div className="flex items-center justify-between py-2 border-b border-slate-200 dark:border-slate-800">
+              <span className="text-sm font-medium">Dark Mode</span>
+              <button
+                onClick={toggleTheme}
+                className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                aria-label="Toggle dark mode"
+              >
+                {isDark ? (
+                  <Sun className="w-5 h-5 text-yellow-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+                )}
+              </button>
+            </div>
+
             {navLinks.map((link) => (
               <Link
                 key={link.to}
@@ -128,4 +155,4 @@ export function Navbar() {
       )}
     </nav>
   );
-}
+};

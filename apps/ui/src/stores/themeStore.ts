@@ -32,11 +32,20 @@ export const useThemeStore = create<ThemeStore>()(
       initTheme: () => {
         const stored = localStorage.getItem('theme-storage');
         if (stored) {
-          const { state } = JSON.parse(stored) as {
-            state?: { isDark?: boolean };
-          };
-          const isDark = state?.isDark ?? false;
-          applyTheme(isDark);
+          try {
+            const { state } = JSON.parse(stored) as {
+              state?: { isDark?: boolean };
+            };
+            const isDark = state?.isDark ?? false;
+            set({ isDark });
+            applyTheme(isDark);
+          } catch {
+            const prefersDark = window.matchMedia(
+              '(prefers-color-scheme: dark)',
+            ).matches;
+            set({ isDark: prefersDark });
+            applyTheme(prefersDark);
+          }
         } else {
           const prefersDark = window.matchMedia(
             '(prefers-color-scheme: dark)',

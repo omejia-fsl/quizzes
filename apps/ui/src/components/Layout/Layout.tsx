@@ -5,9 +5,9 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-export function Layout({ children }: LayoutProps) {
+export const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+    <div className="min-h-screen bg-stone-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-200">
       <Navbar />
 
       <main className="container mx-auto px-4 py-8">{children}</main>
@@ -19,4 +19,4 @@ export function Layout({ children }: LayoutProps) {
       </footer>
     </div>
   );
-}
+};
