@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useEffect } from 'react';
-import { useLoginMutation } from '../../hooks/mutations/useAuthMutations';
+import { useLoginMutation } from '../../api/auth.ts';
 import { useAuth } from '../../hooks/useAuth';
 import { Input } from '../../components/Input/Input';
 import { Button } from '../../components/Button/Button';

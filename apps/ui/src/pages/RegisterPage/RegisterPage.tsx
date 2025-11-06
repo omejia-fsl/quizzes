@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useEffect } from 'react';
-import { useRegisterMutation } from '../../hooks/mutations/useAuthMutations';
+import { useRegisterMutation } from '../../api/auth.ts';
 import { useAuth } from '../../hooks/useAuth';
 import { Input } from '../../components/Input/Input';
 import { Button } from '../../components/Button/Button';
@@ -213,19 +213,19 @@ export const RegisterPage = () => {
           <div className="mt-6 text-center">
             <p className="text-xs text-slate-500 dark:text-slate-400">
               By creating an account, you agree to our{' '}
-              <Link
-                to="#"
+              <a
+                href="#"
                 className="underline hover:text-slate-700 dark:hover:text-slate-300"
               >
                 Terms of Service
-              </Link>{' '}
+              </a>{' '}
               and{' '}
-              <Link
-                to="#"
+              <a
+                href="#"
                 className="underline hover:text-slate-700 dark:hover:text-slate-300"
               >
                 Privacy Policy
-              </Link>
+              </a>
             </p>
           </div>
         </div>

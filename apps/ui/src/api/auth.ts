@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useNavigate } from '@tanstack/react-router';
-import { useAuth } from '../useAuth';
-import type { LoginCredentials, RegisterCredentials } from '../../types';
+import { useAuth } from '../hooks/useAuth.ts';
+import type { LoginCredentials, RegisterCredentials } from '../types';
 
 export const useLoginMutation = () => {
   const { login } = useAuth();

@@ -10,6 +10,9 @@ interface LayoutProps {
 export const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <Navbar />
       <Content>{children}</Content>
       <Footer />

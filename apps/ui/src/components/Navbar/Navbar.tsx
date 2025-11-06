@@ -3,7 +3,7 @@ import { Menu, X, User, Moon, Sun, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useTheme } from '../../hooks/useTheme.ts';
-import { useLogoutMutation } from '../../hooks/mutations/useAuthMutations';
+import { useLogoutMutation } from '../../api/auth.ts';
 import { Button } from '../Button/Button';
 
 export const Navbar = () => {
@@ -19,7 +19,10 @@ export const Navbar = () => {
   ];
 
   return (
-    <nav className="relative h-16 border-b border-slate-200 dark:border-slate-800 bg-stone-50 dark:bg-slate-900">
+    <nav
+      className="relative h-16 border-b border-slate-200 dark:border-slate-800 bg-stone-50 dark:bg-slate-900"
+      aria-label="Main navigation"
+    >
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         <Link
           to="/"

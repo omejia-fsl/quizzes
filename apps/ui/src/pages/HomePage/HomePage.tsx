@@ -176,44 +176,77 @@ export const HomePage = () => {
         </h2>
 
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="p-8 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border border-blue-200 dark:border-blue-800">
-            <h3 className="text-2xl font-bold mb-3 text-blue-900 dark:text-blue-100">
-              Agent Fundamentals
-            </h3>
-            <p className="text-blue-700 dark:text-blue-300 mb-4">
-              Learn the core concepts of AI agents, their purpose, structure,
-              and design patterns
-            </p>
-            <div className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-              8-10 questions
+          <Link
+            to="/quizzes"
+            className="group block transform transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-xl"
+            aria-label="Start Agent Fundamentals quiz - 8-10 questions"
+          >
+            <div className="p-8 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-2 border-blue-200 dark:border-blue-800 group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-colors h-full">
+              <h3 className="text-2xl font-bold mb-3 text-blue-900 dark:text-blue-100 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">
+                Agent Fundamentals
+              </h3>
+              <p className="text-blue-700 dark:text-blue-300 mb-4">
+                Learn the core concepts of AI agents, their purpose, structure,
+                and design patterns
+              </p>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                  8-10 questions
+                </span>
+                <span className="text-blue-600 dark:text-blue-400 font-semibold group-hover:translate-x-1 transition-transform">
+                  Start →
+                </span>
+              </div>
             </div>
-          </div>
+          </Link>
 
-          <div className="p-8 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 border border-purple-200 dark:border-purple-800">
-            <h3 className="text-2xl font-bold mb-3 text-purple-900 dark:text-purple-100">
-              Prompt Engineering
-            </h3>
-            <p className="text-purple-700 dark:text-purple-300 mb-4">
-              Master the art of writing effective prompts and controlling AI
-              outputs
-            </p>
-            <div className="text-sm text-purple-600 dark:text-purple-400 font-medium">
-              8-10 questions
+          <Link
+            to="/quizzes"
+            className="group block transform transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded-xl"
+            aria-label="Start Prompt Engineering quiz - 8-10 questions"
+          >
+            <div className="p-8 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 border-2 border-purple-200 dark:border-purple-800 group-hover:border-purple-400 dark:group-hover:border-purple-600 transition-colors h-full">
+              <h3 className="text-2xl font-bold mb-3 text-purple-900 dark:text-purple-100 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
+                Prompt Engineering
+              </h3>
+              <p className="text-purple-700 dark:text-purple-300 mb-4">
+                Master the art of writing effective prompts and controlling AI
+                outputs
+              </p>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-purple-600 dark:text-purple-400 font-medium">
+                  8-10 questions
+                </span>
+                <span className="text-purple-600 dark:text-purple-400 font-semibold group-hover:translate-x-1 transition-transform">
+                  Start →
+                </span>
+              </div>
             </div>
-          </div>
+          </Link>
 
-          <div className="p-8 rounded-xl bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-950 dark:to-pink-900 border border-pink-200 dark:border-pink-800">
-            <h3 className="text-2xl font-bold mb-3 text-pink-900 dark:text-pink-100">
-              Model Selection
-            </h3>
-            <p className="text-pink-700 dark:text-pink-300 mb-4">
-              Understand how to choose the right model and manage context
-              effectively
-            </p>
-            <div className="text-sm text-pink-600 dark:text-pink-400 font-medium">
-              8-10 questions
+          <Link
+            to="/quizzes"
+            className="group block transform transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 rounded-xl"
+            aria-label="Start Model Selection quiz - 8-10 questions"
+          >
+            <div className="p-8 rounded-xl bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-950 dark:to-pink-900 border-2 border-pink-200 dark:border-pink-800 group-hover:border-pink-400 dark:group-hover:border-pink-600 transition-colors h-full">
+              <h3 className="text-2xl font-bold mb-3 text-pink-900 dark:text-pink-100 group-hover:text-pink-600 dark:group-hover:text-pink-300 transition-colors">
+                Model Selection
+              </h3>
+              <p className="text-pink-700 dark:text-pink-300 mb-4">
+                Understand how to choose the right model and manage context
+                effectively
+              </p>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-pink-600 dark:text-pink-400 font-medium">
+                  8-10 questions
+                </span>
+                <span className="text-pink-600 dark:text-pink-400 font-semibold group-hover:translate-x-1 transition-transform">
+                  Start →
+                </span>
+              </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
 

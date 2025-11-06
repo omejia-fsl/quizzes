@@ -6,7 +6,11 @@ interface ContentProps {
 
 export const Content = ({ children }: ContentProps) => {
   return (
-    <main className="flex-1 container mx-auto px-4 py-8">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="flex-1 container mx-auto px-4 py-8"
+    >
       {children}
     </main>
   );
