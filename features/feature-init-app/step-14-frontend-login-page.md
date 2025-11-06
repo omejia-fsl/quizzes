@@ -7,10 +7,16 @@ Build a functional login page with React Hook Form, Yup validation, and integrat
 - Step 13 completed (Auth store fully functional)
 - react-hook-form, yup, @hookform/resolvers installed
 
-## Files to Create
-- `apps/ui/src/routes/login.tsx` - Login page route
-- `apps/ui/src/shared/components/ui/Input.tsx` - Reusable input component
-- `apps/ui/src/shared/components/ui/Button.tsx` - Reusable button component
+## ⚠️ Documentation Note
+**File Path Discrepancy:** This documentation references files under `apps/ui/src/shared/`, but the actual project structure does not have a `shared/` folder. Adjust paths accordingly:
+- Input component: `apps/ui/src/components/Input/Input.tsx`
+- Button component: `apps/ui/src/components/Button/Button.tsx` (already exists, just add `isLoading` prop)
+- Import paths should use `../components/` not `../shared/components/`
+
+## Files to Create/Modify
+- `apps/ui/src/routes/login.tsx` - Login page route (create)
+- `apps/ui/src/components/Input/Input.tsx` - Reusable input component (create)
+- `apps/ui/src/components/Button/Button.tsx` - Add isLoading prop (modify)
 
 ## Implementation Details
 

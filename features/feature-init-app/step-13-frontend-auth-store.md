@@ -8,10 +8,18 @@ Complete the authentication store with full login, register, logout functionalit
 - Step 5 completed (Auth store structure exists)
 - API service configured
 
+## ⚠️ Documentation Note
+**File Path Discrepancy:** This documentation references files under `apps/ui/src/shared/`, but the actual project structure does not have a `shared/` folder. Files are located directly under `apps/ui/src/`:
+- `apps/ui/src/stores/authStore.ts` (not `shared/stores/`)
+- `apps/ui/src/hooks/useAuth.ts` (not `shared/hooks/`)
+- `apps/ui/src/types/index.ts` (not `shared/types/`)
+
+Adjust file paths accordingly when following this step.
+
 ## Files to Modify
-- `apps/ui/src/shared/stores/authStore.ts` - Complete implementation
-- `apps/ui/src/shared/hooks/useAuth.ts` - Add more actions
-- `apps/ui/src/shared/types/index.ts` - Add auth types
+- `apps/ui/src/stores/authStore.ts` - Complete implementation
+- `apps/ui/src/hooks/useAuth.ts` - Add more actions
+- `apps/ui/src/types/index.ts` - Add auth types
 - `apps/ui/src/main.tsx` - Auto-check auth on mount
 
 ## Implementation Details

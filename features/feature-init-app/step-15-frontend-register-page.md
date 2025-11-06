@@ -7,6 +7,10 @@ Build a registration page with username, email, and password fields. Include pas
 - Step 14 completed (Login page working)
 - UI components (Input, Button) created
 
+## ⚠️ Documentation Note
+**File Path Discrepancy:** This documentation references files under `apps/ui/src/shared/`, but the actual project structure does not have a `shared/` folder. Adjust import paths accordingly:
+- Import paths should use `../components/` and `../hooks/` not `../shared/components/` and `../shared/hooks/`
+
 ## Files to Create
 - `apps/ui/src/routes/register.tsx` - Registration page route
 

@@ -1,14 +1,16 @@
 import { Link } from '@tanstack/react-router';
-import { Menu, X, User, Moon, Sun } from 'lucide-react';
+import { Menu, X, User, Moon, Sun, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useTheme } from '../../hooks/useTheme.ts';
+import { useLogoutMutation } from '../../hooks/mutations/useAuthMutations';
 import { Button } from '../Button/Button';
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const logoutMutation = useLogoutMutation();
 
   const navLinks = [
     { to: '/', label: 'Home' },
@@ -62,19 +64,28 @@ export const Navbar = () => {
                   {user?.username || 'User'}
                 </span>
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => logoutMutation.mutate()}
+                disabled={logoutMutation.isPending}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
             </div>
           ) : (
             <div className="flex items-center gap-3">
-              <a href="/login">
+              <Link to="/login">
                 <Button variant="ghost" size="sm">
                   Login
                 </Button>
-              </a>
-              <a href="/register">
+              </Link>
+              <Link to="/register">
                 <Button variant="primary" size="sm">
                   Sign Up
                 </Button>
-              </a>
+              </Link>
             </div>
           )}
         </div>
@@ -126,23 +137,37 @@ export const Navbar = () => {
 
             {!isAuthenticated && (
               <>
-                <a href="/login" onClick={() => setMobileMenuOpen(false)}>
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
                   <Button variant="ghost" fullWidth>
                     Login
                   </Button>
-                </a>
-                <a href="/register" onClick={() => setMobileMenuOpen(false)}>
+                </Link>
+                <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
                   <Button variant="primary" fullWidth>
                     Sign Up
                   </Button>
-                </a>
+                </Link>
               </>
             )}
 
             {isAuthenticated && (
-              <div className="py-2 text-sm text-slate-600 dark:text-slate-400">
-                Logged in as{' '}
-                <span className="font-medium">{user?.username}</span>
+              <div className="space-y-3">
+                <div className="py-2 text-sm text-slate-600 dark:text-slate-400">
+                  Logged in as{' '}
+                  <span className="font-medium">{user?.username}</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  fullWidth
+                  onClick={() => {
+                    logoutMutation.mutate();
+                    setMobileMenuOpen(false);
+                  }}
+                  disabled={logoutMutation.isPending}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
               </div>
             )}
           </div>
