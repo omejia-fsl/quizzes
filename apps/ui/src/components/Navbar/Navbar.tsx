@@ -3,6 +3,7 @@ import { Menu, X, User, Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useTheme } from '../../hooks/useTheme.ts';
+import { Button } from '../Button/Button';
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,7 +17,7 @@ export const Navbar = () => {
   ];
 
   return (
-    <nav className="h-16 border-b border-slate-200 dark:border-slate-800 bg-stone-50 dark:bg-slate-900">
+    <nav className="relative h-16 border-b border-slate-200 dark:border-slate-800 bg-stone-50 dark:bg-slate-900">
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         <Link
           to="/"
@@ -64,17 +65,15 @@ export const Navbar = () => {
             </div>
           ) : (
             <div className="flex items-center gap-3">
-              <a
-                href="/login"
-                className="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
-              >
-                Login
+              <a href="/login">
+                <Button variant="ghost" size="sm">
+                  Login
+                </Button>
               </a>
-              <a
-                href="/register"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-              >
-                Sign Up
+              <a href="/register">
+                <Button variant="primary" size="sm">
+                  Sign Up
+                </Button>
               </a>
             </div>
           )}
@@ -94,7 +93,7 @@ export const Navbar = () => {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-stone-50 dark:bg-slate-900">
+        <div className="md:hidden absolute top-16 left-0 right-0 border-t border-slate-200 dark:border-slate-800 bg-stone-50 dark:bg-slate-900 z-50 shadow-lg">
           <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
             <div className="flex items-center justify-between py-2 border-b border-slate-200 dark:border-slate-800">
               <span className="text-sm font-medium">Dark Mode</span>
@@ -127,19 +126,15 @@ export const Navbar = () => {
 
             {!isAuthenticated && (
               <>
-                <a
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 text-slate-700 dark:text-slate-300 font-medium"
-                >
-                  Login
+                <a href="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" fullWidth>
+                    Login
+                  </Button>
                 </a>
-                <a
-                  href="/register"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 px-4 bg-blue-600 text-white rounded-lg font-medium text-center"
-                >
-                  Sign Up
+                <a href="/register" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="primary" fullWidth>
+                    Sign Up
+                  </Button>
                 </a>
               </>
             )}
