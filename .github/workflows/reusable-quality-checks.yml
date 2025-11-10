@@ -1,4 +1,5 @@
 name: Reusable Quality Checks
+run-name: Reusable Quality Checks
 
 on:
   workflow_call:

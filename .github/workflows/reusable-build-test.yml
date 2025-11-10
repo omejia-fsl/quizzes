@@ -1,4 +1,5 @@
 name: Reusable Build and Test
+run-name: Reusable Build and Test
 
 on:
   workflow_call:
