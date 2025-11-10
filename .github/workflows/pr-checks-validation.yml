@@ -25,11 +25,6 @@ concurrency:
   group: pr-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-# Define environment variables for branch detection
-env:
-  IS_RELEASE_BRANCH: ${{ contains(fromJSON('["main", "develop", "master", "production"]'), github.base_ref) }}
-  IS_FEATURE_BRANCH: ${{ startsWith(github.base_ref, 'feature/') || startsWith(github.base_ref, 'fix/') || startsWith(github.base_ref, 'chore/') || startsWith(github.base_ref, 'hotfix/') }}
-
 jobs:
   # ============================================================================
   # STAGE 1: Context Detection - Determine what kind of PR this is
