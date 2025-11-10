@@ -1,9 +1,6 @@
 name: PR Checks & Validation
+run-name: PR Checks & Validation
 
-# This unified workflow intelligently adapts its behavior based on the target branch:
-# - For main/develop: Full comprehensive validation (strict mode)
-# - For feature/fix/chore branches: Lightweight checks (fast feedback)
-#
 # Workflow uses progressive validation:
 # 1. Quick structural checks (fast fail)
 # 2. Quality checks (lint, format, typecheck)
