@@ -24,7 +24,14 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,json,css,html}\"",
     "prepare": "husky",
     "pre-commit": "lint-staged",
-    "typecheck": "tsc --noEmit --skipLibCheck"
+    "typecheck": "pnpm run -r typecheck",
+    "typecheck:sequential": "pnpm run typecheck:api && pnpm run typecheck:ui && pnpm run typecheck:packages",
+    "typecheck:api": "pnpm --filter api typecheck",
+    "typecheck:ui": "pnpm --filter ui typecheck",
+    "typecheck:packages": "pnpm run typecheck:shared-models && pnpm run typecheck:shared-types && pnpm run typecheck:shared-utils",
+    "typecheck:shared-models": "pnpm --filter @quiz-app/shared-models typecheck",
+    "typecheck:shared-types": "pnpm --filter @quiz-app/shared-types typecheck",
+    "typecheck:shared-utils": "pnpm --filter @quiz-app/shared-utils typecheck"
   },
   "keywords": [],
   "author": "",
