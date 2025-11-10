@@ -50,16 +50,19 @@ jobs:
           frozen-lockfile: true
 
       - name: Run ESLint
+        id: lint
         if: ${{ inputs.run-lint }}
         run: pnpm lint
         continue-on-error: ${{ inputs.continue-on-error }}
 
       - name: Check Prettier formatting
+        id: format
         if: ${{ inputs.run-format }}
         run: pnpm format:check
         continue-on-error: ${{ inputs.continue-on-error }}
 
       - name: TypeScript type checking
+        id: typecheck
         if: ${{ inputs.run-typecheck }}
         run: pnpm typecheck
         continue-on-error: ${{ inputs.continue-on-error }}
