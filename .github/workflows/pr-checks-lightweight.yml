@@ -1,0 +1,144 @@
+name: PR Checks (Lightweight)
+
+# This lightweight workflow runs only on PRs and focuses on essential checks
+# to minimize GitHub Actions minutes while ensuring code quality
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    # Run only when code files change (ignore docs, configs)
+    paths:
+      - 'apps/**/*.ts'
+      - 'apps/**/*.tsx'
+      - 'packages/**/*.ts'
+      - 'packages/**/*.tsx'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '*.config.*'
+
+# Cancel outdated runs to save Actions minutes
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  quality-checks:
+    name: Code Quality & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # Use matrix strategy for parallel execution (faster overall)
+    strategy:
+      fail-fast: true  # Stop all jobs if one fails (saves minutes)
+      matrix:
+        check: [lint-format, build, test]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # Shallow clone for speed
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.10.0
+
+      - name: Setup Node.js with cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      # Advanced caching strategy
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        id: pnpm-cache
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-${{ runner.os }}-
+
+      # Install deps only if cache miss
+      - name: Install dependencies
+        if: steps.pnpm-cache.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      # Run specific check based on matrix
+      - name: Run ${{ matrix.check }}
+        run: |
+          case "${{ matrix.check }}" in
+            "lint-format")
+              echo "::group::ESLint Check"
+              pnpm lint
+              echo "::endgroup::"
+
+              echo "::group::Prettier Format Check"
+              pnpm format:check
+              echo "::endgroup::"
+
+              echo "::group::TypeScript Check"
+              pnpm typecheck
+              echo "::endgroup::"
+              ;;
+
+            "build")
+              echo "::group::Build API"
+              pnpm build:api
+              echo "::endgroup::"
+
+              echo "::group::Build UI"
+              pnpm build:ui
+              echo "::endgroup::"
+
+              # Cache build artifacts for potential deployment
+              echo "::group::Cache Build Artifacts"
+              tar -czf build-artifacts.tar.gz dist/
+              echo "::endgroup::"
+              ;;
+
+            "test")
+              echo "::group::Run Tests"
+              pnpm test
+              echo "::endgroup::"
+              ;;
+          esac
+
+      # Upload build artifacts only from build job
+      - name: Upload build artifacts
+        if: matrix.check == 'build' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: build-artifacts.tar.gz
+          retention-days: 1  # Minimal retention for PR builds
+
+  # Single status check for branch protection
+  pr-status:
+    name: PR Status Check
+    needs: quality-checks
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Determine PR status
+        run: |
+          if [ "${{ needs.quality-checks.result }}" == "success" ]; then
+            echo "✅ All PR checks passed"
+            echo "STATUS=success" >> $GITHUB_ENV
+          else
+            echo "❌ PR checks failed"
+            echo "STATUS=failure" >> $GITHUB_ENV
+            exit 1
+          fi
+
+      - name: Create status summary
+        if: always()
+        run: |
+          echo "## PR Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "Overall Status: ${{ env.STATUS == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
