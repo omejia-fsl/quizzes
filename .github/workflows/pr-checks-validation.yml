@@ -232,7 +232,7 @@ jobs:
       needs.pr-context.outputs.should-skip != 'true' &&
       needs.quick-checks.result == 'success' &&
       needs.changed-files.outputs.any-code == 'true'
-    uses: ./.github/workflows/reusable/quality-checks.yml
+    uses: ./.github/workflows/reusable-quality-checks.yml
     with:
       run-lint: true
       run-format: true
@@ -252,7 +252,7 @@ jobs:
       needs.pr-context.outputs.should-skip != 'true' &&
       needs.quick-checks.result == 'success' &&
       (needs.quality-checks.result == 'success' || needs.quality-checks.result == 'skipped' || needs.pr-context.outputs.validation-mode == 'lightweight')
-    uses: ./.github/workflows/reusable/build-test.yml
+    uses: ./.github/workflows/reusable-build-test.yml
     with:
       # For full validation: build everything
       # For lightweight: build only what changed
