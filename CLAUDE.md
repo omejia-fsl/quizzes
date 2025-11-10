@@ -11,16 +11,19 @@ This is an AI Development Quiz App — an educational platform for testing knowl
 This is a pnpm monorepo workspace with the following structure:
 
 **Applications:**
+
 - `apps/api`: NestJS backend API (TypeScript) — handles quiz data, user progress, and scoring
 - `apps/ui`: React + Vite frontend (TypeScript, SWC, Tailwind CSS) — quiz interface and user dashboard
 
 **Shared Packages:**
+
 - `packages/shared-models`: Zod schemas and type definitions for data models (auth, user, etc.)
 - `packages/shared-types`: Shared TypeScript types and query keys for React Query
 - `packages/shared-utils`: Shared utility functions and helpers
 
 **Build Output:**
 All compiled code outputs to a centralized `/dist` folder at the root:
+
 - `/dist/api` - NestJS compiled output
 - `/dist/ui` - Vite production build
 - `/dist/shared-*` - Compiled shared packages
@@ -30,6 +33,7 @@ The workspace is managed using pnpm workspaces defined in `pnpm-workspace.yaml`.
 ## Development Commands
 
 ### Quick Start (Recommended)
+
 ```bash
 pnpm install                        # Install all dependencies
 pnpm dev:api                        # Start API in watch mode (port 3000)
@@ -38,7 +42,9 @@ pnpm test                           # Run all tests with Vitest
 ```
 
 ### API (NestJS Backend)
+
 Run from root:
+
 ```bash
 pnpm --filter api start:dev        # Start in watch mode
 pnpm --filter api build             # Build for production
@@ -54,7 +60,9 @@ pnpm --filter api format            # Format with Prettier
 The API runs on port 3000 by default (configurable via `PORT` environment variable).
 
 ### UI (React Frontend)
+
 Run from root:
+
 ```bash
 pnpm --filter ui dev                # Start dev server with HMR
 pnpm --filter ui build              # Type-check and build for production
@@ -67,6 +75,7 @@ pnpm --filter ui lint               # Lint with ESLint
 This project uses Vitest with a workspace/projects configuration for the monorepo.
 
 **Test Structure:**
+
 - Root `vitest.config.ts` defines projects and global settings (coverage, reporters)
 - Each app/package has its own `vitest.config.ts`:
   - `apps/ui`: React tests, jsdom environment, `.test.{ts,tsx}` files
@@ -78,6 +87,7 @@ This project uses Vitest with a workspace/projects configuration for the monorep
 **Running Tests:**
 
 From root directory:
+
 ```bash
 pnpm test                           # Run all tests in all projects
 pnpm test:watch                     # Run all tests in watch mode
@@ -94,6 +104,7 @@ pnpm test:vitest-ui                 # Open Vitest UI for all projects
 **Project Filtering:**
 
 The root vitest config uses glob patterns for projects: `./apps/*` and `./packages/*`. You can filter tests by project name:
+
 ```bash
 vitest --project ui                 # Run only UI tests
 vitest --project api                # Run only API tests
@@ -103,18 +114,21 @@ vitest --project shared-models      # Run only shared-models tests
 ### Linting and Formatting
 
 **Linting:**
+
 ```bash
 pnpm lint                           # Lint all TS/TSX files
 pnpm lint:fix                       # Lint and auto-fix issues
 ```
 
 ESLint is configured in `eslint.config.js` (ESLint v9 flat config) with TypeScript, React Hooks, and Prettier integration. The configuration:
+
 - Uses TypeScript ESLint parser with project service
 - Enforces React Hooks rules
 - Integrates with Prettier for formatting rules
 - Ignores `dist` folder
 
 **Formatting:**
+
 ```bash
 pnpm format                         # Format all TS, TSX, JSON, CSS, HTML files
 pnpm format:check                   # Check formatting without modifying files
@@ -123,6 +137,7 @@ pnpm format:check                   # Check formatting without modifying files
 Prettier is configured in `.prettierrc` with single quotes, trailing commas, and semicolons. The `.prettierignore` excludes `node_modules`, `dist`, and other build artifacts.
 
 ### Building for Production
+
 ```bash
 pnpm build:api                      # Build API to /dist/api
 pnpm build:ui                       # Build UI to /dist/ui (includes TypeScript check)
@@ -131,6 +146,7 @@ pnpm build:ui                       # Build UI to /dist/ui (includes TypeScript 
 ## Architecture
 
 ### Backend (NestJS)
+
 - Standard NestJS module-based architecture
 - Entry point: `apps/api/src/main.ts`
 - Root module: `apps/api/src/app.module.ts`
@@ -140,6 +156,7 @@ pnpm build:ui                       # Build UI to /dist/ui (includes TypeScript 
 - Data persistence will store quiz content, user scores, and attempt history
 
 ### Frontend (React + Vite)
+
 - Vite with SWC for fast compilation and HMR
 - React 19 with StrictMode enabled
 - Tailwind CSS v4 for styling (configured via `@tailwindcss/vite` plugin)
@@ -153,12 +170,14 @@ pnpm build:ui                       # Build UI to /dist/ui (includes TypeScript 
 - Outputs to `/dist/ui` (configured in vite.config.ts)
 
 ### Shared Packages Architecture
+
 - **Type Safety**: All packages use TypeScript with strict mode enabled
 - **Path Aliases**: Packages can be imported using `@quiz-app/shared-*` aliases (configured in root tsconfig.json)
 - **Compilation**: Each package has its own tsconfig.json that extends the root config
 - **Module System**: Packages use NodeNext module resolution for compatibility
 
 ### Application Flow
+
 - Users select quiz categories from the home page
 - Quiz experience shows questions sequentially with immediate feedback
 - Progress indicator tracks completion (e.g., "Question 3 of 10")
@@ -166,22 +185,89 @@ pnpm build:ui                       # Build UI to /dist/ui (includes TypeScript 
 - User progress and scores persist across sessions
 
 ## Package Management
+
 - Uses pnpm as the package manager (version 10.10.0)
 - Always use `pnpm` commands, not `npm` or `yarn`
 - Use `--filter <package-name>` to run commands in specific workspaces from root
 - Workspace packages defined in `pnpm-workspace.yaml`: `apps/*` and `packages/**/*`
 
 ## Feature Development Process
+
 The `features/` folder contains structured feature documentation with step-by-step implementation guides. Each feature folder includes:
+
 - Step files (e.g., `step-0-shared-packages-setup.md`)
 - README.md with feature overview
 - QUICK-START.md and UPDATES.md for context
 
 **Custom Commands:**
+
 - `/execute-feature-step <feature-folder-path> <step-number>` - Execute a specific feature step
 - `/ui-component <name> <folder-path> <specifications>` - Create a reusable React component with tests
 
 Use these commands to follow the structured development workflow defined in feature documentation.
 
+## CI/CD Pipeline
+
+### GitHub Actions Workflows
+
+The project uses a unified, intelligent PR validation workflow that adapts its behavior based on the target branch:
+
+**Main Workflow:** `.github/workflows/pr-checks-validation.yml`
+
+#### Smart Validation Modes
+
+1. **Full Validation Mode** (for PRs to main/develop):
+   - Runs comprehensive quality checks (strict mode)
+   - Builds both API and UI applications
+   - Executes complete test suite with coverage reporting
+   - Fails on any errors (zero tolerance)
+   - Ensures production-ready code quality
+
+2. **Lightweight Mode** (for PRs to feature/_, fix/_, chore/\*):
+   - Quick quality checks with lenient error handling
+   - Selective builds based on changed files
+   - Optional or minimal test execution
+   - Non-blocking quality warnings
+   - Optimized for fast developer feedback
+
+#### Progressive Validation Strategy
+
+The workflow follows a progressive validation approach:
+
+1. **Stage 1:** Quick structural checks (fast fail on critical issues)
+2. **Stage 2:** Code quality checks (lint, format, typecheck)
+3. **Stage 3:** Build verification (selective or full based on mode)
+4. **Stage 4:** Test execution (comprehensive or quick based on mode)
+
+#### Reusable Workflow Components
+
+- `.github/workflows/reusable/quality-checks.yml` - Linting, formatting, type checking
+- `.github/workflows/reusable/build-test.yml` - Build and test execution
+- `.github/actions/setup-project/` - Project setup with caching
+- `.github/actions/validate-monorepo/` - Monorepo structure validation
+
+#### Local Validation
+
+Before pushing changes, run these commands locally:
+
+```bash
+pnpm lint                # ESLint checks
+pnpm format:check        # Prettier formatting check
+pnpm typecheck          # TypeScript compilation check
+pnpm test               # Run tests
+pnpm build:api          # Build API
+pnpm build:ui           # Build UI
+```
+
+#### Path-Based Optimization
+
+The workflow automatically detects changed files and runs only relevant checks:
+
+- Changes to `apps/api/**` trigger API builds and tests
+- Changes to `apps/ui/**` trigger UI builds and tests
+- Changes to `packages/**` affect all dependent apps
+- Documentation-only changes skip validation on development branches
+
 ## Project Conventions
+
 - In the app the created components should be arrow function components, not function or class components

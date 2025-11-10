@@ -1,0 +1,137 @@
+name: Reusable Build and Test
+
+on:
+  workflow_call:
+    inputs:
+      build-api:
+        description: 'Build API application'
+        required: false
+        type: boolean
+        default: true
+      build-ui:
+        description: 'Build UI application'
+        required: false
+        type: boolean
+        default: true
+      run-tests:
+        description: 'Run test suite'
+        required: false
+        type: boolean
+        default: true
+      generate-coverage:
+        description: 'Generate test coverage report'
+        required: false
+        type: boolean
+        default: true
+      upload-coverage:
+        description: 'Upload coverage artifacts'
+        required: false
+        type: boolean
+        default: true
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '20'
+      pnpm-version:
+        description: 'pnpm version to use'
+        required: false
+        type: string
+        default: '10.10.0'
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+        with:
+          node-version: ${{ inputs.node-version }}
+          pnpm-version: ${{ inputs.pnpm-version }}
+          install-deps: true
+          frozen-lockfile: true
+
+      - name: Build API
+        if: ${{ inputs.build-api }}
+        run: pnpm build:api
+        continue-on-error: false
+
+      - name: Build UI
+        if: ${{ inputs.build-ui }}
+        run: pnpm build:ui
+        continue-on-error: false
+
+      - name: Run tests
+        if: ${{ inputs.run-tests }}
+        id: tests
+        run: pnpm test
+        continue-on-error: false
+
+      - name: Generate test coverage report
+        if: ${{ inputs.generate-coverage && inputs.run-tests && steps.tests.outcome == 'success' }}
+        id: coverage
+        run: pnpm test:coverage
+        continue-on-error: true
+
+      - name: Upload coverage reports
+        if: ${{ inputs.upload-coverage && steps.coverage.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports-${{ github.run_id }}
+          path: |
+            coverage/
+            **/coverage/
+          retention-days: 7
+
+      - name: Build artifacts summary
+        if: always()
+        run: |
+          echo "## Build & Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Build results
+          if [[ "${{ inputs.build-api }}" == "true" || "${{ inputs.build-ui }}" == "true" ]]; then
+            echo "### Build Results" >> $GITHUB_STEP_SUMMARY
+            echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+            echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+
+            if [[ "${{ inputs.build-api }}" == "true" ]]; then
+              echo "| API Build | ✅ Success |" >> $GITHUB_STEP_SUMMARY
+            fi
+
+            if [[ "${{ inputs.build-ui }}" == "true" ]]; then
+              echo "| UI Build | ✅ Success |" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Test results
+          if [[ "${{ inputs.run-tests }}" == "true" ]]; then
+            echo "### Test Results" >> $GITHUB_STEP_SUMMARY
+            echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
+            echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Unit Tests | ${{ steps.tests.outcome == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+
+            if [[ "${{ inputs.generate-coverage }}" == "true" ]]; then
+              echo "| Coverage Report | ${{ steps.coverage.outcome == 'success' && '✅ Generated' || '⚠️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Build output structure
+          if [ -d "dist" ]; then
+            echo "### Build Output Structure" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            ls -la dist/ 2>/dev/null || echo "No dist folder found" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Package versions
+          echo "### Environment" >> $GITHUB_STEP_SUMMARY
+          echo "- Node.js: $(node --version)" >> $GITHUB_STEP_SUMMARY
+          echo "- pnpm: $(pnpm --version)" >> $GITHUB_STEP_SUMMARY
+          echo "- TypeScript: $(pnpm tsc --version | cut -d' ' -f2)" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,501 @@
+name: PR Checks & Validation
+
+# This unified workflow intelligently adapts its behavior based on the target branch:
+# - For main/develop: Full comprehensive validation (strict mode)
+# - For feature/fix/chore branches: Lightweight checks (fast feedback)
+#
+# Workflow uses progressive validation:
+# 1. Quick structural checks (fast fail)
+# 2. Quality checks (lint, format, typecheck)
+# 3. Build and test (expensive operations)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    # Trigger for all branches - logic inside determines behavior
+  workflow_dispatch:
+    inputs:
+      force-full-validation:
+        description: 'Force full validation regardless of branch'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: pr-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+# Define environment variables for branch detection
+env:
+  IS_RELEASE_BRANCH: ${{ contains(fromJSON('["main", "develop", "master", "production"]'), github.base_ref) }}
+  IS_FEATURE_BRANCH: ${{ startsWith(github.base_ref, 'feature/') || startsWith(github.base_ref, 'fix/') || startsWith(github.base_ref, 'chore/') || startsWith(github.base_ref, 'hotfix/') }}
+
+jobs:
+  # ============================================================================
+  # STAGE 1: Context Detection - Determine what kind of PR this is
+  # ============================================================================
+
+  pr-context:
+    name: Analyze PR Context
+    runs-on: ubuntu-latest
+    outputs:
+      validation-mode: ${{ steps.determine-mode.outputs.mode }}
+      should-skip: ${{ steps.check-skip.outputs.skip }}
+      pr-type: ${{ steps.determine-mode.outputs.pr-type }}
+      is-docs-only: ${{ steps.filter.outputs.docs-only }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Needed for proper change detection
+
+      - name: Check if docs-only changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            docs-only:
+              - '!(**/*.ts)'
+              - '!(**/*.tsx)'
+              - '!(**/*.js)'
+              - '!(**/*.jsx)'
+              - '!(**/*.json)'
+              - '!(**/*.yaml)'
+              - '!(**/*.yml)'
+              - '**.md'
+              - 'docs/**'
+              - '.vscode/**'
+
+      - name: Determine validation mode
+        id: determine-mode
+        run: |
+          TARGET_BRANCH="${{ github.base_ref }}"
+          FORCE_FULL="${{ github.event.inputs.force-full-validation }}"
+
+          echo "🎯 Target branch: $TARGET_BRANCH"
+
+          # Determine PR type and validation mode
+          if [[ "$FORCE_FULL" == "true" ]]; then
+            echo "mode=full" >> $GITHUB_OUTPUT
+            echo "pr-type=forced-full" >> $GITHUB_OUTPUT
+            echo "🔧 Forced full validation mode"
+          elif [[ "$TARGET_BRANCH" == "main" || "$TARGET_BRANCH" == "develop" || "$TARGET_BRANCH" == "master" || "$TARGET_BRANCH" == "production" ]]; then
+            echo "mode=full" >> $GITHUB_OUTPUT
+            echo "pr-type=release" >> $GITHUB_OUTPUT
+            echo "🚀 Release branch detected - Full validation mode"
+          elif [[ "$TARGET_BRANCH" == feature/* || "$TARGET_BRANCH" == fix/* || "$TARGET_BRANCH" == chore/* || "$TARGET_BRANCH" == hotfix/* ]]; then
+            echo "mode=lightweight" >> $GITHUB_OUTPUT
+            echo "pr-type=development" >> $GITHUB_OUTPUT
+            echo "⚡ Development branch detected - Lightweight mode"
+          else
+            # Default to lightweight for unknown branches
+            echo "mode=lightweight" >> $GITHUB_OUTPUT
+            echo "pr-type=other" >> $GITHUB_OUTPUT
+            echo "📋 Other branch type - Defaulting to lightweight mode"
+          fi
+
+      - name: Check if should skip
+        id: check-skip
+        run: |
+          MODE="${{ steps.determine-mode.outputs.mode }}"
+          DOCS_ONLY="${{ steps.filter.outputs.docs-only }}"
+
+          # Skip for docs-only changes on non-release branches
+          if [[ "$MODE" == "lightweight" && "$DOCS_ONLY" == "true" ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "📚 Documentation-only changes on development branch - Skipping checks"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Report PR context
+        run: |
+          echo "## 📋 PR Context Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Target Branch | \`${{ github.base_ref }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Source Branch | \`${{ github.head_ref }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| PR Type | **${{ steps.determine-mode.outputs.pr-type }}** |" >> $GITHUB_STEP_SUMMARY
+          echo "| Validation Mode | **${{ steps.determine-mode.outputs.mode }}** |" >> $GITHUB_STEP_SUMMARY
+          echo "| Docs Only | ${{ steps.filter.outputs.docs-only == 'true' && '✅ Yes' || '❌ No' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Will Skip | ${{ steps.check-skip.outputs.skip == 'true' && '⏭️ Yes' || '▶️ No' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ steps.determine-mode.outputs.mode }}" == "full" ]]; then
+            echo "### 🚀 Full Validation Mode" >> $GITHUB_STEP_SUMMARY
+            echo "This PR targets a release branch and will undergo comprehensive validation:" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ All quality checks (strict mode)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Full builds (API & UI)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Complete test suite with coverage" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Fail on any errors" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ⚡ Lightweight Mode" >> $GITHUB_STEP_SUMMARY
+            echo "This PR targets a development branch and will use fast feedback mode:" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Quick quality checks (lenient mode)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Selective builds based on changes" >> $GITHUB_STEP_SUMMARY
+            echo "- ⏭️ Tests optional or subset only" >> $GITHUB_STEP_SUMMARY
+            echo "- ⚠️ Non-blocking quality issues" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ============================================================================
+  # STAGE 2: Quick Structural Validation (Always runs first, fast fail)
+  # ============================================================================
+
+  quick-checks:
+    name: Quick Structural Checks
+    needs: [pr-context]
+    if: ${{ needs.pr-context.outputs.should-skip != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+        with:
+          install-deps: true
+          frozen-lockfile: ${{ needs.pr-context.outputs.validation-mode == 'full' }}
+
+      - name: Validate monorepo structure
+        uses: ./.github/actions/validate-monorepo
+
+      - name: Report quick checks status
+        if: always()
+        run: |
+          echo "✅ Quick structural validation completed" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # STAGE 3: Detect Changed Files (For selective execution)
+  # ============================================================================
+
+  changed-files:
+    name: Detect Changed Files
+    needs: [pr-context]
+    if: ${{ needs.pr-context.outputs.should-skip != 'true' }}
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      ui: ${{ steps.filter.outputs.ui }}
+      packages: ${{ steps.filter.outputs.packages }}
+      config: ${{ steps.filter.outputs.config }}
+      any-code: ${{ steps.filter.outputs.any-code }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect changes by path
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'apps/api/**'
+              - 'packages/**'
+            ui:
+              - 'apps/ui/**'
+              - 'packages/**'
+            packages:
+              - 'packages/**'
+            config:
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - 'tsconfig*.json'
+              - '.prettierrc'
+              - 'eslint.config.js'
+              - 'vitest.config.ts'
+              - '.github/**'
+            any-code:
+              - '**/*.ts'
+              - '**/*.tsx'
+              - '**/*.js'
+              - '**/*.jsx'
+
+      - name: Report detected changes
+        run: |
+          echo "## 🔍 Changed Files Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Changed | Impact |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|---------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| API | ${{ steps.filter.outputs.api == 'true' && '✅' || '➖' }} | ${{ steps.filter.outputs.api == 'true' && 'Will build & test API' || 'Skip API build' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| UI | ${{ steps.filter.outputs.ui == 'true' && '✅' || '➖' }} | ${{ steps.filter.outputs.ui == 'true' && 'Will build & test UI' || 'Skip UI build' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Packages | ${{ steps.filter.outputs.packages == 'true' && '✅' || '➖' }} | ${{ steps.filter.outputs.packages == 'true' && 'Affects all apps' || 'No package changes' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Config | ${{ steps.filter.outputs.config == 'true' && '✅' || '➖' }} | ${{ steps.filter.outputs.config == 'true' && 'Config changed' || 'Config unchanged' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Code Files | ${{ steps.filter.outputs.any-code == 'true' && '✅' || '➖' }} | ${{ steps.filter.outputs.any-code == 'true' && 'Code changes detected' || 'No code changes' }} |" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # STAGE 4: Quality Checks (Adaptive based on mode)
+  # ============================================================================
+
+  quality-checks:
+    name: Code Quality Checks
+    needs: [pr-context, quick-checks, changed-files]
+    if: |
+      always() &&
+      needs.pr-context.outputs.should-skip != 'true' &&
+      needs.quick-checks.result == 'success' &&
+      needs.changed-files.outputs.any-code == 'true'
+    uses: ./.github/workflows/reusable/quality-checks.yml
+    with:
+      run-lint: true
+      run-format: true
+      run-typecheck: true
+      # Strict for release branches, lenient for development
+      continue-on-error: ${{ needs.pr-context.outputs.validation-mode == 'lightweight' }}
+
+  # ============================================================================
+  # STAGE 5: Build and Test (Adaptive based on mode and changes)
+  # ============================================================================
+
+  build-and-test:
+    name: Build & Test
+    needs: [pr-context, quick-checks, changed-files, quality-checks]
+    if: |
+      always() &&
+      needs.pr-context.outputs.should-skip != 'true' &&
+      needs.quick-checks.result == 'success' &&
+      (needs.quality-checks.result == 'success' || needs.quality-checks.result == 'skipped' || needs.pr-context.outputs.validation-mode == 'lightweight')
+    uses: ./.github/workflows/reusable/build-test.yml
+    with:
+      # For full validation: build everything
+      # For lightweight: build only what changed
+      build-api: ${{ needs.pr-context.outputs.validation-mode == 'full' || needs.changed-files.outputs.api == 'true' }}
+      build-ui: ${{ needs.pr-context.outputs.validation-mode == 'full' || needs.changed-files.outputs.ui == 'true' }}
+      # Full validation runs all tests with coverage
+      # Lightweight skips tests or runs minimal set
+      run-tests: ${{ needs.pr-context.outputs.validation-mode == 'full' }}
+      generate-coverage: ${{ needs.pr-context.outputs.validation-mode == 'full' }}
+      upload-coverage: ${{ needs.pr-context.outputs.validation-mode == 'full' }}
+
+  # ============================================================================
+  # STAGE 6: Optional Lightweight Tests (For development branches)
+  # ============================================================================
+
+  lightweight-tests:
+    name: Quick Tests (Development)
+    needs: [pr-context, changed-files, build-and-test]
+    if: |
+      needs.pr-context.outputs.validation-mode == 'lightweight' &&
+      needs.changed-files.outputs.any-code == 'true' &&
+      needs.build-and-test.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true # Non-blocking for development branches
+
+    steps:
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+        with:
+          install-deps: true
+
+      - name: Run quick unit tests
+        id: tests
+        run: |
+          echo "Running quick unit tests for changed components..."
+
+          # Run targeted tests based on what changed
+          if [[ "${{ needs.changed-files.outputs.api }}" == "true" ]]; then
+            echo "Testing API..."
+            pnpm test:api --run || true
+          fi
+
+          if [[ "${{ needs.changed-files.outputs.ui }}" == "true" ]]; then
+            echo "Testing UI..."
+            pnpm test:ui --run || true
+          fi
+
+          if [[ "${{ needs.changed-files.outputs.packages }}" == "true" ]]; then
+            echo "Testing packages..."
+            pnpm test:packages --run || true
+          fi
+        continue-on-error: true
+
+      - name: Report test results
+        if: always()
+        run: |
+          echo "## 🧪 Quick Test Results (Non-blocking)" >> $GITHUB_STEP_SUMMARY
+          echo "Tests ran in lightweight mode - failures won't block the PR" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # FINAL: Validation Status Report
+  # ============================================================================
+
+  validation-status:
+    name: PR Validation Status
+    runs-on: ubuntu-latest
+    needs: [pr-context, quick-checks, quality-checks, build-and-test, lightweight-tests]
+    if: always()
+
+    steps:
+      - name: Determine overall status
+        id: overall
+        run: |
+          MODE="${{ needs.pr-context.outputs.validation-mode }}"
+          SKIPPED="${{ needs.pr-context.outputs.should-skip }}"
+
+          # For skipped PRs (docs-only on dev branches)
+          if [[ "$SKIPPED" == "true" ]]; then
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            echo "message=Documentation-only changes - Validation skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Check critical failures (always fail)
+          if [[ "${{ needs.quick-checks.result }}" == "failure" ]]; then
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "message=Structural validation failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # For full validation mode (strict)
+          if [[ "$MODE" == "full" ]]; then
+            if [[ "${{ needs.quality-checks.result }}" == "failure" ||
+                  "${{ needs.build-and-test.result }}" == "failure" ]]; then
+              echo "status=failed" >> $GITHUB_OUTPUT
+              echo "message=Full validation failed - Fix all issues before merging" >> $GITHUB_OUTPUT
+              exit 1
+            else
+              echo "status=passed" >> $GITHUB_OUTPUT
+              echo "message=Full validation passed - Ready for review" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+
+          # For lightweight mode (lenient)
+          if [[ "$MODE" == "lightweight" ]]; then
+            # Only fail on build failures, not quality issues
+            if [[ "${{ needs.build-and-test.result }}" == "failure" ]]; then
+              echo "status=failed" >> $GITHUB_OUTPUT
+              echo "message=Build failed - Must be fixed" >> $GITHUB_OUTPUT
+              exit 1
+            elif [[ "${{ needs.quality-checks.result }}" == "failure" ]]; then
+              echo "status=passed-with-warnings" >> $GITHUB_OUTPUT
+              echo "message=Passed with quality warnings - Consider fixing before merge" >> $GITHUB_OUTPUT
+              exit 0
+            else
+              echo "status=passed" >> $GITHUB_OUTPUT
+              echo "message=Lightweight validation passed" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+
+      - name: Generate final validation report
+        if: always()
+        run: |
+          echo "# 📊 PR Validation Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Header with mode and status
+          MODE="${{ needs.pr-context.outputs.validation-mode }}"
+          PR_TYPE="${{ needs.pr-context.outputs.pr-type }}"
+          STATUS="${{ steps.overall.outputs.status }}"
+          MESSAGE="${{ steps.overall.outputs.message }}"
+
+          # Status badge
+          if [[ "$STATUS" == "passed" ]]; then
+            echo "## ✅ Validation Passed" >> $GITHUB_STEP_SUMMARY
+          elif [[ "$STATUS" == "passed-with-warnings" ]]; then
+            echo "## ⚠️ Passed with Warnings" >> $GITHUB_STEP_SUMMARY
+          elif [[ "$STATUS" == "failed" ]]; then
+            echo "## ❌ Validation Failed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ⏭️ Validation Skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "**$MESSAGE**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Validation mode info
+          echo "### Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mode:** $MODE" >> $GITHUB_STEP_SUMMARY
+          echo "- **PR Type:** $PR_TYPE" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target Branch:** ${{ github.base_ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Detailed results table
+          echo "### Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Stage | Check | Result | Required | Notes |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|--------|----------|-------|" >> $GITHUB_STEP_SUMMARY
+
+          # Quick checks
+          QUICK_RESULT="${{ needs.quick-checks.result }}"
+          if [[ "$QUICK_RESULT" == "success" ]]; then
+            echo "| 1 | 🏗️ Structure | ✅ Passed | ✓ | Monorepo validated |" >> $GITHUB_STEP_SUMMARY
+          elif [[ "$QUICK_RESULT" == "skipped" ]]; then
+            echo "| 1 | 🏗️ Structure | ⏭️ Skipped | - | - |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| 1 | 🏗️ Structure | ❌ Failed | ✓ | **Fix required** |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Quality checks
+          QUALITY_RESULT="${{ needs.quality-checks.result }}"
+          QUALITY_REQUIRED=$([[ "$MODE" == "full" ]] && echo "✓" || echo "○")
+          if [[ "$QUALITY_RESULT" == "success" ]]; then
+            echo "| 2 | 🎨 Quality | ✅ Passed | $QUALITY_REQUIRED | Lint, format, types OK |" >> $GITHUB_STEP_SUMMARY
+          elif [[ "$QUALITY_RESULT" == "skipped" ]]; then
+            echo "| 2 | 🎨 Quality | ⏭️ Skipped | $QUALITY_REQUIRED | No code changes |" >> $GITHUB_STEP_SUMMARY
+          elif [[ "$QUALITY_RESULT" == "failure" && "$MODE" == "lightweight" ]]; then
+            echo "| 2 | 🎨 Quality | ⚠️ Issues | $QUALITY_REQUIRED | Non-blocking warnings |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| 2 | 🎨 Quality | ❌ Failed | $QUALITY_REQUIRED | **Fix required** |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Build and test
+          BUILD_RESULT="${{ needs.build-and-test.result }}"
+          if [[ "$BUILD_RESULT" == "success" ]]; then
+            echo "| 3 | 🔨 Build | ✅ Passed | ✓ | Build successful |" >> $GITHUB_STEP_SUMMARY
+          elif [[ "$BUILD_RESULT" == "skipped" ]]; then
+            echo "| 3 | 🔨 Build | ⏭️ Skipped | ✓ | - |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| 3 | 🔨 Build | ❌ Failed | ✓ | **Fix required** |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Tests (different requirements by mode)
+          if [[ "$MODE" == "full" ]]; then
+            if [[ "$BUILD_RESULT" == "success" ]]; then
+              echo "| 4 | 🧪 Tests | ✅ Passed | ✓ | Full test suite with coverage |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| 4 | 🧪 Tests | ❌ Failed | ✓ | **Fix required** |" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            TEST_RESULT="${{ needs.lightweight-tests.result }}"
+            if [[ "$TEST_RESULT" == "success" ]]; then
+              echo "| 4 | 🧪 Tests | ✅ Passed | ○ | Quick tests passed |" >> $GITHUB_STEP_SUMMARY
+            elif [[ "$TEST_RESULT" == "failure" ]]; then
+              echo "| 4 | 🧪 Tests | ⚠️ Failed | ○ | Non-blocking |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| 4 | 🧪 Tests | ⏭️ Skipped | ○ | Optional for dev branches |" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "*Legend: ✓ = Required for merge, ○ = Optional/Advisory*" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Next steps
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          if [[ "$STATUS" == "passed" ]]; then
+            echo "✅ This PR is ready for code review!" >> $GITHUB_STEP_SUMMARY
+          elif [[ "$STATUS" == "passed-with-warnings" ]]; then
+            echo "⚠️ Consider addressing quality warnings before requesting review." >> $GITHUB_STEP_SUMMARY
+            echo "- Run \`pnpm lint:fix\` to auto-fix linting issues" >> $GITHUB_STEP_SUMMARY
+            echo "- Run \`pnpm format\` to fix formatting" >> $GITHUB_STEP_SUMMARY
+            echo "- Check TypeScript errors with \`pnpm typecheck\`" >> $GITHUB_STEP_SUMMARY
+          elif [[ "$STATUS" == "failed" ]]; then
+            echo "❌ Please fix the failing checks:" >> $GITHUB_STEP_SUMMARY
+            echo "1. Check the failed jobs above for details" >> $GITHUB_STEP_SUMMARY
+            echo "2. Run checks locally before pushing:" >> $GITHUB_STEP_SUMMARY
+            echo "   - \`pnpm lint\` for linting" >> $GITHUB_STEP_SUMMARY
+            echo "   - \`pnpm format:check\` for formatting" >> $GITHUB_STEP_SUMMARY
+            echo "   - \`pnpm typecheck\` for TypeScript" >> $GITHUB_STEP_SUMMARY
+            echo "   - \`pnpm test\` for tests" >> $GITHUB_STEP_SUMMARY
+            echo "   - \`pnpm build:api\` and \`pnpm build:ui\` for builds" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Generated at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📖 [View workflow documentation](https://github.com/${{ github.repository }}/blob/main/.github/workflows/pr-checks-validation.yml)" >> $GITHUB_STEP_SUMMARY

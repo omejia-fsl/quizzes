@@ -1,0 +1,85 @@
+name: Reusable Quality Checks
+
+on:
+  workflow_call:
+    inputs:
+      run-lint:
+        description: 'Run ESLint check'
+        required: false
+        type: boolean
+        default: true
+      run-format:
+        description: 'Run Prettier format check'
+        required: false
+        type: boolean
+        default: true
+      run-typecheck:
+        description: 'Run TypeScript type checking'
+        required: false
+        type: boolean
+        default: true
+      continue-on-error:
+        description: 'Continue workflow even if checks fail'
+        required: false
+        type: boolean
+        default: false
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '20'
+      pnpm-version:
+        description: 'pnpm version to use'
+        required: false
+        type: string
+        default: '10.10.0'
+
+jobs:
+  quality-checks:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+        with:
+          node-version: ${{ inputs.node-version }}
+          pnpm-version: ${{ inputs.pnpm-version }}
+          install-deps: true
+          frozen-lockfile: true
+
+      - name: Run ESLint
+        if: ${{ inputs.run-lint }}
+        run: pnpm lint
+        continue-on-error: ${{ inputs.continue-on-error }}
+
+      - name: Check Prettier formatting
+        if: ${{ inputs.run-format }}
+        run: pnpm format:check
+        continue-on-error: ${{ inputs.continue-on-error }}
+
+      - name: TypeScript type checking
+        if: ${{ inputs.run-typecheck }}
+        run: pnpm typecheck
+        continue-on-error: ${{ inputs.continue-on-error }}
+
+      - name: Quality checks summary
+        if: always()
+        run: |
+          echo "## Quality Checks Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ inputs.run-lint }}" == "true" ]]; then
+            echo "| ESLint | ${{ steps.lint.outcome == 'success' && '✅ Passed' || '⚠️ Issues found' }} |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ "${{ inputs.run-format }}" == "true" ]]; then
+            echo "| Prettier | ${{ steps.format.outcome == 'success' && '✅ Passed' || '⚠️ Issues found' }} |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ "${{ inputs.run-typecheck }}" == "true" ]]; then
+            echo "| TypeScript | ${{ steps.typecheck.outcome == 'success' && '✅ Passed' || '⚠️ Issues found' }} |" >> $GITHUB_STEP_SUMMARY
+          fi
