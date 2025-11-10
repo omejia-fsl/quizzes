@@ -1,0 +1,101 @@
+name: 'Validate Monorepo Structure'
+description: 'Composite action to validate monorepo structure and required scripts'
+author: 'Quiz App Team'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check package.json scripts
+      shell: bash
+      run: |
+        echo "Validating required npm scripts exist..."
+        MISSING_SCRIPTS=0
+
+        for script in lint format:check build:api build:ui test typecheck; do
+          if pnpm pkg get scripts.$script > /dev/null 2>&1; then
+            echo "✅ Script '$script' is available"
+          else
+            echo "❌ Script '$script' is missing"
+            MISSING_SCRIPTS=$((MISSING_SCRIPTS + 1))
+          fi
+        done
+
+        if [ $MISSING_SCRIPTS -ne 0 ]; then
+          echo "Error: $MISSING_SCRIPTS required scripts are missing"
+          exit 1
+        fi
+
+        echo "✅ All required scripts are available"
+
+    - name: Validate monorepo structure
+      shell: bash
+      run: |
+        echo "Checking monorepo workspace structure..."
+        ERRORS=0
+
+        # Check required directories
+        if [ -d "apps/api" ]; then
+          echo "✅ apps/api exists"
+        else
+          echo "❌ apps/api is missing"
+          ERRORS=$((ERRORS + 1))
+        fi
+
+        if [ -d "apps/ui" ]; then
+          echo "✅ apps/ui exists"
+        else
+          echo "❌ apps/ui is missing"
+          ERRORS=$((ERRORS + 1))
+        fi
+
+        if [ -d "packages" ]; then
+          echo "✅ packages folder exists"
+        else
+          echo "❌ packages folder is missing"
+          ERRORS=$((ERRORS + 1))
+        fi
+
+        # Check required config files
+        if [ -f "pnpm-workspace.yaml" ]; then
+          echo "✅ pnpm-workspace.yaml exists"
+        else
+          echo "❌ pnpm-workspace.yaml is missing"
+          ERRORS=$((ERRORS + 1))
+        fi
+
+        if [ -f "vitest.config.ts" ]; then
+          echo "✅ vitest.config.ts exists"
+        else
+          echo "⚠️ vitest.config.ts is missing (optional but recommended)"
+        fi
+
+        if [ -f "eslint.config.js" ]; then
+          echo "✅ eslint.config.js exists"
+        else
+          echo "⚠️ eslint.config.js is missing (optional but recommended)"
+        fi
+
+        if [ $ERRORS -ne 0 ]; then
+          echo "Error: $ERRORS critical structure issues found"
+          exit 1
+        fi
+
+        echo "✅ Monorepo structure validation passed"
+
+    - name: Validate workspace packages
+      shell: bash
+      run: |
+        echo "Checking workspace packages..."
+
+        # List all workspace packages
+        echo "📦 Workspace packages found:"
+        pnpm ls -r --depth=-1 --json | jq -r '.[] | "\(.name) @ \(.path)"' || echo "Unable to list packages"
+
+        # Check shared packages
+        for pkg in shared-models shared-types shared-utils; do
+          if [ -d "packages/$pkg" ]; then
+            echo "✅ packages/$pkg exists"
+          else
+            echo "⚠️ packages/$pkg not found (may be optional)"
+          fi
+        done
