@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Auto-install dependencies if pnpm-lock.yaml changed
+changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+
+if echo "$changed_files" | grep -q "pnpm-lock.yaml"; then
+  echo "📦 pnpm-lock.yaml changed. Running pnpm install..."
+  pnpm install
+fi
