@@ -6,7 +6,14 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [tanstackRouter(), react(), tailwindcss()],
+  plugins: [
+    tanstackRouter({
+      target: 'react',
+      autoCodeSplitting: true,
+    }),
+    react(),
+    tailwindcss(),
+  ],
   envDir: '../../',
   build: {
     outDir: './dist',
