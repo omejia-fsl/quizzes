@@ -6,3 +6,4 @@ export { Quiz, QuizSchema } from './quiz.schema';
 export * from './quiz.interface';
 export { AttemptAnswer, AttemptAnswerSchema } from './attempt-answer.schema';
 export { QuizAttempt, QuizAttemptSchema } from './quiz-attempt.schema';
+export type { QuizAttemptDocument } from './quiz-attempt.schema';

@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 import { AttemptAnswer, AttemptAnswerSchema } from './attempt-answer.schema';
 
 @Schema({ timestamps: true })
-export class QuizAttempt extends Document {
+export class QuizAttempt {
   @Prop({ type: String, required: true, index: true })
   userId!: string;
 
@@ -37,6 +37,9 @@ export class QuizAttempt extends Document {
 
   @Prop({ type: [AttemptAnswerSchema], required: true })
   answers!: Types.DocumentArray<AttemptAnswer>;
+
+  createdAt!: Date;
+  updatedAt!: Date;
 }
 
 export const QuizAttemptSchema = SchemaFactory.createForClass(QuizAttempt);
@@ -44,3 +47,10 @@ export const QuizAttemptSchema = SchemaFactory.createForClass(QuizAttempt);
 QuizAttemptSchema.index({ userId: 1, createdAt: -1 });
 QuizAttemptSchema.index({ quizId: 1, createdAt: -1 });
 QuizAttemptSchema.index({ userId: 1, quizId: 1, createdAt: -1 });
+
+export type QuizAttemptDocument = QuizAttempt &
+  Document & {
+    _id: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+  };

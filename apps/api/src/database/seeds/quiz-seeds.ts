@@ -9,6 +9,7 @@ export const quizSeeds = [
     isActive: true,
     questions: [
       {
+        order: 1,
         text: 'What is the primary purpose of a planning component in an AI agent?',
         explanation:
           'The planning component breaks down complex tasks into manageable steps, enabling the agent to approach problems systematically rather than reactively.',
@@ -32,6 +33,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 2,
         text: 'Which memory type is best suited for storing factual information that an agent needs to reference repeatedly?',
         explanation:
           'Long-term memory is designed to store persistent information that needs to be retained across sessions, making it ideal for factual data and knowledge bases.',
@@ -55,6 +57,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 3,
         text: 'What is the role of a tool in an AI agent system?',
         explanation:
           'Tools extend agent capabilities by providing interfaces to external systems, APIs, or functions that the agent can invoke to perform actions beyond text generation.',
@@ -78,6 +81,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 4,
         text: 'In a ReAct (Reasoning + Acting) agent pattern, what does the agent do after observing the result of an action?',
         explanation:
           'ReAct agents follow a cycle: Reason about the next step, Act by using a tool or providing an answer, then Observe the result to inform the next reasoning step.',
@@ -101,6 +105,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 5,
         text: 'What is a key advantage of using vector embeddings in agent memory systems?',
         explanation:
           'Vector embeddings represent semantic meaning in high-dimensional space, enabling similarity-based retrieval that finds conceptually related information rather than just exact keyword matches.',
@@ -124,6 +129,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 6,
         text: 'Which component is responsible for deciding which tool an agent should use next?',
         explanation:
           'The orchestration/reasoning layer analyzes the current state, available tools, and task requirements to decide the best next action for the agent to take.',
@@ -147,6 +153,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 7,
         text: 'What is the purpose of an agent\'s "reflection" capability?',
         explanation:
           'Reflection allows agents to evaluate their own performance, learn from mistakes, and improve their approach to similar tasks in the future, creating a self-improvement loop.',
@@ -170,6 +177,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 8,
         text: 'In multi-agent systems, what is the primary benefit of having specialized agents?',
         explanation:
           'Specialized agents can focus on specific domains or tasks, developing deep expertise and optimized workflows for their area, which improves overall system performance and reliability.',
@@ -193,6 +201,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 9,
         text: 'What is the main challenge that agent guardrails are designed to address?',
         explanation:
           'Guardrails enforce boundaries and safety constraints to prevent agents from taking harmful actions, accessing prohibited resources, or operating outside their intended scope.',
@@ -216,6 +225,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 10,
         text: 'What role does the "environment" play in agent development?',
         explanation:
           'The environment provides the context, state information, and feedback that agents need to understand their situation and make informed decisions about actions.',
@@ -250,6 +260,7 @@ export const quizSeeds = [
     isActive: true,
     questions: [
       {
+        order: 1,
         text: 'What is the primary goal of prompt engineering?',
         explanation:
           'Prompt engineering focuses on crafting inputs that guide LLMs to produce the most accurate, relevant, and useful responses for a given task.',
@@ -273,6 +284,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 2,
         text: 'Which prompting technique involves providing examples of desired input-output pairs?',
         explanation:
           'Few-shot prompting demonstrates the desired pattern through examples, helping the model understand the task format and expected response style.',
@@ -296,6 +308,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 3,
         text: 'What does "chain-of-thought" prompting encourage the model to do?',
         explanation:
           'Chain-of-thought prompting asks the model to show its reasoning process step-by-step, which improves accuracy on complex tasks requiring multi-step reasoning.',
@@ -319,6 +332,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 4,
         text: 'Why is it important to specify the desired output format in a prompt?',
         explanation:
           "Specifying the output format (JSON, markdown, bullet points, etc.) ensures the model generates responses in a structure that's easy to parse and integrate with your application.",
@@ -342,6 +356,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 5,
         text: 'What is "temperature" in the context of LLM generation?',
         explanation:
           'Temperature controls randomness: lower values (0.0-0.3) make outputs more deterministic and focused, while higher values (0.7-1.0+) increase creativity and variation.',
@@ -365,6 +380,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 6,
         text: 'Which technique helps prevent prompt injection attacks?',
         explanation:
           'Input sanitization and validation remove or escape potentially malicious content before it reaches the model, preventing attackers from manipulating the system through crafted inputs.',
@@ -388,6 +404,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 7,
         text: 'What is the benefit of using system messages in chat-based models?',
         explanation:
           'System messages set persistent context and behavior guidelines that influence all subsequent interactions without needing to repeat instructions in every user message.',
@@ -411,6 +428,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 8,
         text: 'Why should prompts include clear task boundaries and constraints?',
         explanation:
           'Clear boundaries prevent scope creep, keep responses focused on the specific task, and reduce irrelevant or unhelpful content that wastes tokens and user time.',
@@ -445,6 +463,7 @@ export const quizSeeds = [
     isActive: true,
     questions: [
       {
+        order: 1,
         text: 'What is the main tradeoff when choosing between large and small language models?',
         explanation:
           'Larger models typically offer better performance and capabilities but require more computational resources and cost more, while smaller models are faster and cheaper but may have reduced capabilities.',
@@ -468,6 +487,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 2,
         text: 'Which factor is most important when selecting a model for latency-sensitive applications?',
         explanation:
           'For real-time or interactive applications, inference speed (how quickly the model generates responses) is critical to providing a good user experience.',
@@ -491,6 +511,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 3,
         text: 'What is the purpose of model quantization?',
         explanation:
           'Quantization reduces the precision of model weights (e.g., from 32-bit to 8-bit), decreasing model size and speeding up inference with minimal accuracy loss.',
@@ -514,6 +535,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 4,
         text: 'When should you consider fine-tuning a model instead of using prompt engineering?',
         explanation:
           "Fine-tuning is most valuable when you need consistent behavior on specialized tasks or domains where prompt engineering alone doesn't achieve the required performance.",
@@ -537,6 +559,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 5,
         text: 'What is the context window of a language model?',
         explanation:
           'The context window defines how many tokens the model can process at once, including both input and output. Longer windows allow for more comprehensive conversations and document analysis.',
@@ -560,6 +583,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 6,
         text: 'Which approach is best for reducing hallucinations in model outputs?',
         explanation:
           'RAG provides models with relevant, factual information from trusted sources during inference, grounding responses in real data rather than relying solely on parametric knowledge.',
@@ -583,6 +607,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 7,
         text: 'What is model distillation?',
         explanation:
           'Distillation trains a smaller "student" model to mimic a larger "teacher" model, transferring knowledge while creating a more efficient model for deployment.',
@@ -606,6 +631,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 8,
         text: 'Why might you choose a specialized model over a general-purpose LLM?',
         explanation:
           'Specialized models are optimized for specific tasks or domains, offering better performance, efficiency, and accuracy for those use cases compared to general-purpose models.',
@@ -629,6 +655,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 9,
         text: 'What is the main advantage of using locally hosted models vs. API-based models?',
         explanation:
           'Local hosting gives you complete control over data privacy, security, and compliance since sensitive information never leaves your infrastructure.',
@@ -652,6 +679,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 10,
         text: "What metric best measures a model's efficiency for production deployment?",
         explanation:
           'Tokens per second (throughput) directly impacts user experience and operational costs, measuring how efficiently the model processes requests in production environments.',
@@ -675,6 +703,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 11,
         text: 'When evaluating models, what does "few-shot performance" refer to?',
         explanation:
           'Few-shot performance measures how well a model can learn and adapt to new tasks given only a few examples, indicating its generalization ability.',
@@ -698,6 +727,7 @@ export const quizSeeds = [
         ],
       },
       {
+        order: 12,
         text: 'What is the primary benefit of using model caching strategies?',
         explanation:
           'Caching stores results of identical or similar requests, avoiding redundant API calls and computations, which significantly reduces costs and latency for repeated queries.',
