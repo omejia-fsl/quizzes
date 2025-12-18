@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from '@tanstack/react-router';
-import { useQuiz, useSubmitQuiz } from '../../../hooks/useQuizzes';
 import { useAuth } from '../../../hooks/useAuth';
-import type { SubmitAnswerDto } from '../../../api/quizzes';
+import { useSubmitQuizMutation } from '../../../api/mutations/quizzes.ts';
+import type { SubmitAnswerDto } from '../../../api/endpoints/quizzes.ts';
+import { useQuizQuery } from '../../../api/queries/quizzes.ts';
 
 interface QuizDetailProps {
   quizId: string;
@@ -11,8 +12,8 @@ interface QuizDetailProps {
 export const QuizDetailPage = ({ quizId }: QuizDetailProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { data: quiz, isLoading, error } = useQuiz(quizId);
-  const { mutate: submitQuiz } = useSubmitQuiz();
+  const { data: quiz, isLoading, error } = useQuizQuery(quizId);
+  const { mutate: submitQuiz } = useSubmitQuizMutation();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<

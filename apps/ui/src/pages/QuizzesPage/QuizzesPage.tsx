@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { useQuizzes, useCategories } from '../../hooks/useQuizzes';
-import type { QuizFilters } from '../../api/quizzes';
 import { QuizCard } from '../../components/QuizCard/QuizCard.tsx';
+import type { QuizFilters } from '../../api/endpoints/quizzes.ts';
+import {
+  useQuizCategoriesQuery,
+  useQuizzesQuery,
+} from '../../api/queries/quizzes.ts';
 
 export const QuizzesPage = () => {
   const [filters, setFilters] = useState<QuizFilters>({});
-  const { data: quizzesData, isLoading, error } = useQuizzes(filters);
-  const { data: categoriesData } = useCategories();
+  const { data: quizzesData, isLoading, error } = useQuizzesQuery(filters);
+  const { data: quizzCategoriesData } = useQuizCategoriesQuery();
 
   const handleCategoryChange = (category: string) => {
     setFilters((prev) => ({
@@ -45,7 +48,7 @@ export const QuizzesPage = () => {
                 onChange={(e) => handleCategoryChange(e.target.value)}
               >
                 <option value="all">All Categories</option>
-                {categoriesData?.categories.map((category) => (
+                {quizzCategoriesData?.categories.map((category) => (
                   <option key={category} value={category}>
                     {category}
                   </option>

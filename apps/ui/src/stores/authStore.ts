@@ -1,27 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { api } from '../api/api';
-import type {
-  User,
-  AuthResponse,
-  LoginCredentials,
-  RegisterCredentials,
-} from '../types';
+import type { User } from '@quiz-app/shared-models/models/user';
 
 interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
 }
 
 interface AuthActions {
-  login: (credentials: LoginCredentials) => Promise<void>;
-  register: (credentials: RegisterCredentials) => Promise<void>;
-  logout: () => void;
-  checkAuth: () => Promise<void>;
-  clearError: () => void;
+  setAuth: (user: User, token: string) => void;
+  clearAuth: () => void;
 }
 
 type AuthStore = AuthState & AuthActions;
@@ -32,100 +21,23 @@ export const useAuthStore = create<AuthStore>()(
       user: null,
       token: null,
       isAuthenticated: false,
-      isLoading: false,
-      error: null,
 
-      login: async (credentials) => {
-        set({ isLoading: true, error: null });
-        try {
-          const response = await api.post<AuthResponse>(
-            '/auth/login',
-            credentials,
-            {
-              skipAuth: true,
-            },
-          );
-
-          localStorage.setItem('auth_token', response.access_token);
-
-          set({
-            user: response.user,
-            token: response.access_token,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-        } catch (error: any) {
-          const message = error.message || 'Login failed';
-          set({ error: message, isLoading: false });
-          throw error;
-        }
+      setAuth: (user, token) => {
+        localStorage.setItem('auth_token', token);
+        set({
+          user,
+          token,
+          isAuthenticated: true,
+        });
       },
 
-      register: async (credentials) => {
-        set({ isLoading: true, error: null });
-        try {
-          const response = await api.post<AuthResponse>(
-            '/auth/register',
-            credentials,
-            {
-              skipAuth: true,
-            },
-          );
-
-          localStorage.setItem('auth_token', response.access_token);
-
-          set({
-            user: response.user,
-            token: response.access_token,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-        } catch (error: any) {
-          const message = error.message || 'Registration failed';
-          set({ error: message, isLoading: false });
-          throw error;
-        }
-      },
-
-      logout: () => {
+      clearAuth: () => {
         localStorage.removeItem('auth_token');
         set({
           user: null,
           token: null,
           isAuthenticated: false,
-          error: null,
         });
-      },
-
-      checkAuth: async () => {
-        const token = localStorage.getItem('auth_token');
-        if (!token) {
-          set({ isAuthenticated: false, user: null, token: null });
-          return;
-        }
-
-        set({ isLoading: true });
-        try {
-          const response = await api.get<{ user: User }>('/auth/profile');
-          set({
-            user: response.user,
-            token,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-        } catch {
-          localStorage.removeItem('auth_token');
-          set({
-            user: null,
-            token: null,
-            isAuthenticated: false,
-            isLoading: false,
-          });
-        }
-      },
-
-      clearError: () => {
-        set({ error: null });
       },
     }),
     {
@@ -133,6 +45,7 @@ export const useAuthStore = create<AuthStore>()(
       partialize: (state) => ({
         user: state.user,
         token: state.token,
+        isAuthenticated: state.isAuthenticated,
       }),
     },
   ),

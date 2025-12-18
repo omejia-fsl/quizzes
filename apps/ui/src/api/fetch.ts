@@ -56,6 +56,7 @@ function buildRequestOptions(options: ApiFetchOptions): RequestInit {
   const { body } = options;
 
   return {
+    method: options.method || 'GET',
     headers: buildHeaders(options),
     ...(body && { body: JSON.stringify(body) }),
   };

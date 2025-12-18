@@ -24,7 +24,7 @@ export class AuthService {
       return {
         access_token: token,
         user: {
-          id: (user._id as any).toString(),
+          id: user._id.toString(),
           username: user.username,
           email: user.email,
         },
@@ -56,7 +56,7 @@ export class AuthService {
     return {
       access_token: token,
       user: {
-        id: (user._id as any).toString(),
+        id: user._id.toString(),
         username: user.username,
         email: user.email,
       },
@@ -65,7 +65,7 @@ export class AuthService {
 
   private async generateToken(user: any): Promise<string> {
     const payload: JwtPayload = {
-      sub: (user._id as any).toString(),
+      sub: user._id.toString(),
       email: user.email,
       username: user.username,
     };
@@ -75,5 +75,11 @@ export class AuthService {
 
   async validateUser(payload: JwtPayload) {
     return this.usersService.findById(payload.sub);
+  }
+
+  async logout(): Promise<{ message: string }> {
+    return {
+      message: 'Logged out successfully',
+    };
   }
 }

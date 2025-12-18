@@ -7,11 +7,9 @@ import { Toaster } from 'react-hot-toast';
 import { router } from './routes/router.ts';
 import { queryClient } from './api/queryClient.ts';
 import { useThemeStore } from './stores/themeStore';
-import { useAuthStore } from './stores/authStore';
 import './index.css';
 
 useThemeStore.getState().initTheme();
-void useAuthStore.getState().checkAuth();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
