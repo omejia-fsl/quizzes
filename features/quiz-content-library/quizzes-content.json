@@ -1,0 +1,492 @@
+{
+  "quizzes": [
+    {
+      "id": "agent-design-fundamentals-001",
+      "title": "Agent Design Fundamentals",
+      "category": "agent-design",
+      "description": "Master the core concepts of AI agent architecture including agent loops, tools, memory systems, and planning strategies. This quiz tests your understanding of how modern AI agents perceive their environment, make decisions, and take actions.",
+      "estimatedCompletionTime": "12-15 minutes",
+      "difficulty": "intermediate",
+      "tags": ["agents", "architecture", "fundamentals", "loops", "memory"],
+      "questions": [
+        {
+          "id": "adt-001-q001",
+          "questionText": "In a typical AI agent loop, what is the primary purpose of the planning stage?",
+          "options": [
+            "To store information about past interactions for future reference",
+            "To determine the next action(s) the agent should take based on its current state and goal",
+            "To execute tools and interact with the external environment",
+            "To evaluate whether the agent has sufficient computational resources"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "The planning stage determines which action the agent should take next by reasoning about its current situation, goals, and available options. While agents do store memory (option A) and execute tools (option C), these occur in separate stages of the loop. Resource management (option D) is not the primary purpose of planning.",
+          "difficulty": "easy",
+          "tags": ["agent-loop", "planning"]
+        },
+        {
+          "id": "adt-001-q002",
+          "questionText": "You're designing an agent that needs to search the web, analyze documents, and send emails. What is the most scalable approach for implementing these capabilities?",
+          "options": [
+            "Hard-code each capability directly into the agent's decision logic",
+            "Define these as separate tools the agent can call, with clear descriptions of what each tool does",
+            "Create three separate agents, each specialized for one task",
+            "Implement all logic within a single large language model without external tools"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Defining capabilities as tools allows agents to compose multiple functions flexibly and scale as needed. Hard-coding (option A) creates inflexible code; multiple agents (option C) complicates coordination; and relying solely on an LLM (option D) is less reliable than giving agents access to real tools. The tool-based approach follows the principle of separation of concerns.",
+          "difficulty": "medium",
+          "tags": ["tools", "agent-design", "scalability"]
+        },
+        {
+          "id": "adt-001-q003",
+          "questionText": "What is the key difference between short-term memory and long-term memory in agent design?",
+          "options": [
+            "Short-term memory uses text, while long-term memory uses databases",
+            "Short-term memory holds the current task context and recent steps, while long-term memory stores learned patterns and historical information across sessions",
+            "Long-term memory is faster because it caches frequently accessed data",
+            "Short-term memory is optional, but long-term memory is mandatory for all agents"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Short-term (working) memory maintains the immediate context needed to solve the current problem (conversation history, recent steps), while long-term memory persists knowledge across sessions and interactions. The storage medium (option A) varies by implementation. Speed (option C) doesn't define the distinction, and both can be optional (option D) depending on the agent's requirements.",
+          "difficulty": "medium",
+          "tags": ["memory", "agent-design"]
+        },
+        {
+          "id": "adt-001-q004",
+          "questionText": "In an agentic system, which of these best describes the relationship between reflection and planning?",
+          "options": [
+            "Reflection is unnecessary; agents should always stick to their original plan",
+            "Planning happens once at the start; reflection continuously improves subsequent actions",
+            "They are sequential: the agent reflects on its performance, then uses those insights to adjust its plan for the next step",
+            "Reflection and planning are the same thing and serve no purpose"
+          ],
+          "correctAnswerIndex": 2,
+          "explanation": "Effective agents reflect on their actions' outcomes and failures, then adjust their strategies accordingly. This reflection-planning cycle enables continuous improvement. Option A ignores the value of adaptation; option B reverses their typical timing; option D is clearly incorrect. Reflection without planning is ineffective, and planning without reflection leads to repeated mistakes.",
+          "difficulty": "hard",
+          "tags": ["reflection", "planning", "agent-design"]
+        },
+        {
+          "id": "adt-001-q005",
+          "questionText": "You're building an agent that needs to handle tasks requiring multiple steps, like booking a flight and hotel together. What is the most important consideration for managing this complex interaction?",
+          "options": [
+            "Use the shortest possible prompts to minimize token usage",
+            "Enable the agent to retrieve and track intermediate state (results from booking the flight before booking the hotel) and handle errors gracefully",
+            "Always require human approval before each step",
+            "Run each booking as a completely separate, independent agent"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Multi-step tasks require agents to maintain state and context between steps. Tracking intermediate results (like the flight confirmation) and handling errors ensures the workflow completes successfully. Option A sacrifices clarity; option C eliminates automation benefits; option D loses important context and coordination between related tasks.",
+          "difficulty": "hard",
+          "tags": ["multi-step-tasks", "state-management", "error-handling"]
+        },
+        {
+          "id": "adt-001-q006",
+          "questionText": "What is a fundamental limitation of reactive agents (agents without planning)?",
+          "options": [
+            "They cannot use external tools or APIs",
+            "They can only respond to immediate stimuli and cannot handle tasks requiring multi-step strategies or goal decomposition",
+            "They are too expensive computationally compared to planning agents",
+            "They cannot maintain any form of memory"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Reactive agents respond directly to current inputs without planning ahead. They struggle with complex tasks requiring multiple steps, subgoals, or strategic reasoning. Reactive agents can use tools (option A), may be computationally efficient (option C), and can have memory (option D) — their core limitation is lack of forward planning.",
+          "difficulty": "medium",
+          "tags": ["reactive-agents", "planning", "architecture"]
+        },
+        {
+          "id": "adt-001-q007",
+          "questionText": "When designing an agent system, why is tool description and documentation critical?",
+          "options": [
+            "Tools don't need descriptions; the agent will figure out how to use them through trial and error",
+            "Clear descriptions help the LLM understand what each tool does, when to use it, and what parameters it expects, leading to better decisions",
+            "Descriptions are only necessary for human developers, not for the agent",
+            "Well-described tools slow down the agent by requiring more tokens to process"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Tool descriptions directly influence whether the agent calls the right tool at the right time with correct parameters. Clear documentation improves decision quality. Trial and error (option A) is inefficient; descriptions matter for agents (option C); proper descriptions optimize performance despite token costs (option D).",
+          "difficulty": "easy",
+          "tags": ["tools", "prompting", "agent-design"]
+        },
+        {
+          "id": "adt-001-q008",
+          "questionText": "In hierarchical agent architectures, what is the primary advantage of having high-level agents delegate to specialized lower-level agents?",
+          "options": [
+            "It always reduces the total number of tokens used",
+            "It enables better separation of concerns, allows task specialization, and makes the system more modular and maintainable",
+            "It eliminates the need for any planning",
+            "It guarantees faster execution speeds"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Hierarchical delegation creates modularity, allows specialized agents to become expert at their domain, and simplifies the reasoning at each level. Token usage (option A) depends on implementation; planning (option C) is still needed; speed (option D) is not guaranteed. The real benefit is architectural clarity and composability.",
+          "difficulty": "medium",
+          "tags": ["hierarchical-agents", "architecture", "modularity"]
+        },
+        {
+          "id": "adt-001-q009",
+          "questionText": "Why might an agent need to implement a max-iteration limit or stopping condition?",
+          "options": [
+            "To make the agent faster, regardless of correctness",
+            "To prevent infinite loops where the agent gets stuck repeating the same actions without making progress toward its goal",
+            "To force the agent to give up on difficult problems",
+            "Stopping conditions are never necessary; agents should always be allowed to run indefinitely"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Stopping conditions prevent runaway loops and wasted resources when agents fail to make progress. They protect against infinite reasoning or tool-calling loops. This is a safety mechanism, not a performance optimization (option A). Good stopping conditions allow graceful fallbacks (option C) rather than giving up entirely.",
+          "difficulty": "medium",
+          "tags": ["agent-safety", "loops", "reliability"]
+        },
+        {
+          "id": "adt-001-q010",
+          "questionText": "Which statement best describes the relationship between agent autonomy and human oversight in production systems?",
+          "options": [
+            "Agents should always operate with complete autonomy; human oversight defeats the purpose of automation",
+            "Humans should make every decision; agents are useful only for simple data processing",
+            "Effective systems balance agent autonomy with appropriate human oversight — giving agents independence for low-risk decisions while requiring approval for high-impact actions",
+            "There is no relationship; autonomy and oversight are completely independent concerns"
+          ],
+          "correctAnswerIndex": 2,
+          "explanation": "Production agent systems require thoughtful governance: high-autonomy for routine tasks, escalation for critical decisions. Complete autonomy (option A) risks catastrophic errors; eliminating automation (option B) wastes potential; treating them as unrelated (option D) misses the design challenge. Option C reflects real-world best practices.",
+          "difficulty": "hard",
+          "tags": ["agent-autonomy", "safety", "governance"]
+        }
+      ]
+    },
+    {
+      "id": "prompt-engineering-best-practices-001",
+      "title": "Prompt Engineering Best Practices",
+      "category": "prompt-engineering",
+      "description": "Learn to design and optimize prompts for maximum effectiveness. This quiz covers few-shot learning, chain-of-thought prompting, system vs user prompts, context management, and prompt structure — essential skills for reliably guiding AI models.",
+      "estimatedCompletionTime": "12-15 minutes",
+      "difficulty": "intermediate",
+      "tags": [
+        "prompting",
+        "few-shot",
+        "chain-of-thought",
+        "context",
+        "optimization"
+      ],
+      "questions": [
+        {
+          "id": "pebp-001-q001",
+          "questionText": "What is the primary purpose of a system prompt in an AI application?",
+          "options": [
+            "To replace the user's input with pre-programmed responses",
+            "To define the assistant's role, constraints, values, and behavior for all subsequent interactions in the conversation",
+            "To increase the model's response time for security purposes",
+            "To prevent the model from learning from user inputs"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "The system prompt establishes the context and boundaries for how the assistant should behave throughout a conversation. It's a foundational instruction that shapes all responses. Options A and D misrepresent its purpose; option C conflates it with performance considerations.",
+          "difficulty": "easy",
+          "tags": ["system-prompt", "prompting"]
+        },
+        {
+          "id": "pebp-001-q002",
+          "questionText": "You want a model to analyze customer feedback and classify it as 'positive', 'negative', or 'neutral'. Which approach would most improve the model's accuracy?",
+          "options": [
+            "Ask the model to classify without any examples, assuming it understands the task",
+            "Provide 2-3 clear examples of feedback with their correct classifications, then ask the model to classify new feedback (few-shot learning)",
+            "Ask the model to first explain its reasoning before providing a classification",
+            "Request the same task multiple times and average the results"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Few-shot learning dramatically improves task performance by showing the model concrete examples of the expected behavior. This is more effective than zero-shot (option A), though chain-of-thought (option B) can be complementary. Averaging identical tasks (option D) doesn't provide new information.",
+          "difficulty": "easy",
+          "tags": ["few-shot", "prompting", "accuracy"]
+        },
+        {
+          "id": "pebp-001-q003",
+          "questionText": "Why is chain-of-thought (CoT) prompting particularly effective for complex reasoning tasks?",
+          "options": [
+            "It reduces the number of tokens the model needs to process",
+            "It forces the model to explicitly state its reasoning steps before reaching a conclusion, improving accuracy on multi-step problems",
+            "It eliminates the need for fine-tuning the model",
+            "It works equally well for all tasks, regardless of complexity"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Chain-of-thought prompting encourages step-by-step reasoning, which helps models avoid errors in multi-step logic. It may increase tokens (option A), doesn't eliminate fine-tuning (option C), and works better for complex than simple tasks (option D).",
+          "difficulty": "medium",
+          "tags": ["chain-of-thought", "reasoning", "prompting"]
+        },
+        {
+          "id": "pebp-001-q004",
+          "questionText": "When context is limited (e.g., short context window), what is the most important strategy for effective prompting?",
+          "options": [
+            "Include as much background information as possible",
+            "Prioritize including only the most relevant context and examples, using concise language and removing unnecessary details",
+            "Ask multiple separate requests instead of one comprehensive request",
+            "Avoid giving examples to save tokens"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "With limited context, efficiency is critical. Including only relevant information maximizes clarity without wasting the window. Option A is counterproductive; option C fragments the task; option D removes valuable guidance.",
+          "difficulty": "medium",
+          "tags": ["context-management", "efficiency", "prompting"]
+        },
+        {
+          "id": "pebp-001-q005",
+          "questionText": "You notice your prompt produces inconsistent results across similar inputs. Which technique would most help stabilize the output?",
+          "options": [
+            "Increase the temperature parameter to introduce more randomness",
+            "Use lower temperature, provide more specific examples in few-shot demonstrations, and clarify expected output format",
+            "Ask the model to be 'more creative' in each prompt",
+            "Use a larger model without changing the prompt"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Consistency comes from clear expectations: lower temperature reduces randomness, examples show the pattern, and format specifications prevent variation. Option A introduces randomness; option C increases variance; option D alone won't fix prompt clarity issues.",
+          "difficulty": "hard",
+          "tags": ["consistency", "prompt-optimization", "temperature"]
+        },
+        {
+          "id": "pebp-001-q006",
+          "questionText": "What is a key difference between providing context through the system prompt versus the user message?",
+          "options": [
+            "They are functionally identical; the location doesn't matter",
+            "System prompts apply consistently to all user messages, while user message context is specific to that single interaction",
+            "User messages are more secure than system prompts",
+            "System prompts are always ignored by the model"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "System prompts establish persistent instructions affecting all responses in a conversation, while user message context is specific to that turn. They serve different purposes: system for behavior definition, user for task-specific input.",
+          "difficulty": "medium",
+          "tags": ["system-prompt", "user-prompt", "context"]
+        },
+        {
+          "id": "pebp-001-q007",
+          "questionText": "When crafting few-shot examples, which principle is most important?",
+          "options": [
+            "Include as many examples as possible to cover every scenario",
+            "Use examples that closely match the style, complexity, and edge cases of tasks you want the model to perform",
+            "Always use the simplest possible examples to avoid confusing the model",
+            "Examples don't matter; the model will perform the same regardless"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Few-shot examples should be representative of the actual task distribution. 2-5 well-chosen examples typically outperform many generic ones. Quality matters more than quantity (option A); matching complexity helps (option B better than C); examples significantly impact performance (option D is wrong).",
+          "difficulty": "medium",
+          "tags": ["few-shot", "prompt-design", "examples"]
+        },
+        {
+          "id": "pebp-001-q008",
+          "questionText": "You're designing a prompt for a coding assistant. What structure would most improve output quality?",
+          "options": [
+            "Ask for code without any constraints or specifications",
+            "Specify the task, desired programming language, code style, edge cases to handle, and provide an example of the expected output format",
+            "Request multiple different solutions and pick the best one",
+            "Use only natural language without any code examples"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Detailed specifications guide the model toward correct, maintainable output. Clear requirements about language, style, and edge cases significantly improve quality. Option A lacks guidance; option C doubles computational cost; option D misses the opportunity to show expected patterns.",
+          "difficulty": "medium",
+          "tags": ["code-generation", "prompt-structure", "specifications"]
+        },
+        {
+          "id": "pebp-001-q009",
+          "questionText": "Which of these represents the best practice for specifying output format requirements?",
+          "options": [
+            "Hope the model guesses the format you want",
+            "Use explicit formatting instructions with clear examples (e.g., 'Return as JSON with fields: name, age, email')",
+            "Ask the model to 'be helpful' and format responses nicely",
+            "Output format doesn't matter for most applications"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Explicit format specifications ensure consistent, parseable output. Examples of the exact format you need dramatically improve compliance. Relying on hope (option A) or vague requests (option C) leads to unpredictable outputs, causing downstream failures.",
+          "difficulty": "easy",
+          "tags": ["output-format", "structured-output", "prompting"]
+        },
+        {
+          "id": "pebp-001-q010",
+          "questionText": "When should you use negative prompting (telling the model what NOT to do) versus positive prompting (telling it what TO do)?",
+          "options": [
+            "Never use negative prompting; it confuses the model",
+            "Use positive prompting as your primary strategy, and add negative prompting only when the model consistently makes specific unwanted mistakes",
+            "Always use negative prompting because it's more direct",
+            "The choice doesn't matter; both approaches produce identical results"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Positive prompting is generally more effective because it guides the model toward correct behavior. Negative prompting works best as a supplement to fix specific issues. The model responds better to what it should do (option B) than to what it shouldn't.",
+          "difficulty": "hard",
+          "tags": ["negative-prompting", "prompt-strategy", "optimization"]
+        }
+      ]
+    },
+    {
+      "id": "model-selection-and-usage-001",
+      "title": "Model Selection and Usage",
+      "category": "model-selection",
+      "description": "Make informed decisions about which AI models to use and how to use them effectively. This quiz covers model capabilities, context windows, cost optimization, streaming versus batch processing, and parameter tuning — critical knowledge for production AI systems.",
+      "estimatedCompletionTime": "15-18 minutes",
+      "difficulty": "intermediate-advanced",
+      "tags": [
+        "model-selection",
+        "context-windows",
+        "cost",
+        "streaming",
+        "parameters"
+      ],
+      "questions": [
+        {
+          "id": "msu-001-q001",
+          "questionText": "What does a model's context window represent?",
+          "options": [
+            "The maximum processing speed of the model",
+            "The maximum number of tokens the model can process in a single request, including both input and output",
+            "The number of parameters in the model",
+            "The time it takes to generate a response"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Context window is the token limit for a request. It defines how much text you can provide as input plus output generation. Options A and D relate to performance; option C relates to model size but not directly to context constraints.",
+          "difficulty": "easy",
+          "tags": ["context-window", "tokens"]
+        },
+        {
+          "id": "msu-001-q002",
+          "questionText": "You need to process a 50,000-token document. Which consideration is most important when selecting a model?",
+          "options": [
+            "Choose the cheapest model available",
+            "Ensure the model's context window can accommodate the entire document plus space for your prompt and response",
+            "Always use the largest available model",
+            "Model selection doesn't depend on document size"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "The document must fit within the context window. If it doesn't, you'll need to chunk it or use a model with a larger window. Cost (option A) is secondary to functional requirements; larger isn't always better (option C).",
+          "difficulty": "easy",
+          "tags": ["context-window", "model-selection"]
+        },
+        {
+          "id": "msu-001-q003",
+          "questionText": "When is batch processing preferable to streaming for API calls?",
+          "options": [
+            "Batch processing is always faster than streaming",
+            "When you don't need results immediately and want to optimize cost and efficiency by processing multiple requests together",
+            "Streaming is never used in modern applications",
+            "When you need real-time responses for individual requests"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Batch APIs typically offer lower costs for non-urgent processing by consolidating requests. Real-time needs require streaming (option D). Batch isn't always faster (option A), and streaming is common (option C).",
+          "difficulty": "medium",
+          "tags": ["batch-processing", "streaming", "cost-optimization"]
+        },
+        {
+          "id": "msu-001-q004",
+          "questionText": "What does the temperature parameter control in language models?",
+          "options": [
+            "How fast the model processes requests",
+            "The randomness and creativity of responses: higher values increase diversity but reduce consistency, lower values produce more predictable outputs",
+            "How many tokens the model can process",
+            "The cost of using the model"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Temperature (typically 0-2) controls response randomness. Low temperature (e.g., 0) produces deterministic, focused outputs; high temperature produces diverse, creative responses. Options A, C, and D describe different model properties.",
+          "difficulty": "medium",
+          "tags": ["temperature", "model-parameters", "creativity"]
+        },
+        {
+          "id": "msu-001-q005",
+          "questionText": "You're building an application requiring consistent, reliable answers to factual questions. What temperature setting would be most appropriate?",
+          "options": [
+            "Temperature 1.5 or higher for maximum creativity",
+            "Temperature 0 or close to 0 for deterministic, consistent responses",
+            "Temperature around 0.7 for balanced responses",
+            "Temperature doesn't affect factual accuracy"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Low temperature (near 0) minimizes randomness, producing consistent, predictable outputs — ideal for factual tasks. Higher temperatures introduce creativity, which can contradict factual accuracy. Temperature does affect consistency (option D is incorrect).",
+          "difficulty": "easy",
+          "tags": ["temperature", "consistency", "factual-tasks"]
+        },
+        {
+          "id": "msu-001-q006",
+          "questionText": "What is the primary trade-off when choosing between a smaller, faster model versus a larger, more capable model?",
+          "options": [
+            "There is no trade-off; larger models are always better",
+            "Smaller models are faster and cheaper but may produce lower quality results; larger models offer better quality but higher latency and cost",
+            "Speed and cost are unrelated to model size",
+            "Larger models are always free to use"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "This is a fundamental trade-off in model selection. Task difficulty, quality requirements, and budget constraints determine the optimal choice. Neither approach is universally superior.",
+          "difficulty": "medium",
+          "tags": ["model-selection", "trade-offs", "cost-quality"]
+        },
+        {
+          "id": "msu-001-q007",
+          "questionText": "When should you use streaming responses instead of waiting for the complete response?",
+          "options": [
+            "Only for trivial tasks that don't need accuracy",
+            "When you need to provide intermediate results to the user immediately and improve perceived latency, or for long-running tasks where immediate feedback is valuable",
+            "Streaming should never be used",
+            "When you want the cheapest possible API calls"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Streaming improves user experience for long responses by showing results incrementally. It's valuable for conversational UX but uses the same tokens as batch requests (option D incorrect). It's not limited to trivial tasks (option A).",
+          "difficulty": "medium",
+          "tags": ["streaming", "user-experience", "latency"]
+        },
+        {
+          "id": "msu-001-q008",
+          "questionText": "What does the top_p parameter (nucleus sampling) do?",
+          "options": [
+            "It controls how many tokens the model can process",
+            "It limits the model to only the top P% most likely tokens at each step, reducing unlikely outputs while maintaining diversity",
+            "It speeds up model inference",
+            "It determines the cost of API calls"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Top_p filters to the most probable tokens that cumulatively reach probability P, balancing quality with diversity. Options A, C, and D describe unrelated properties.",
+          "difficulty": "hard",
+          "tags": ["top-p", "nucleus-sampling", "model-parameters"]
+        },
+        {
+          "id": "msu-001-q009",
+          "questionText": "You're designing an application where cost per request is critical, but quality is still important. What strategy would be most effective?",
+          "options": [
+            "Use the cheapest model available regardless of quality",
+            "Evaluate smaller, cost-efficient models that still meet your quality requirements; optimize prompts to reduce token usage; consider batch processing for non-urgent requests",
+            "Quality and cost are mutually exclusive; choose one",
+            "Cost doesn't depend on model selection"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Optimal cost efficiency requires balancing model selection, prompt optimization, and processing strategy. There are cost-conscious models with adequate performance. Small models + good prompts often outperform larger models + bad prompts.",
+          "difficulty": "hard",
+          "tags": ["cost-optimization", "model-selection", "efficiency"]
+        },
+        {
+          "id": "msu-001-q010",
+          "questionText": "A model can generate up to 4,000 tokens in a response, but you expect most responses will be 200-500 tokens. How should you set max_tokens?",
+          "options": [
+            "Always set max_tokens to 4,000 to allow maximum flexibility",
+            "Set max_tokens slightly higher than your expected response length (e.g., 1,000) to allow for longer-than-expected responses while controlling costs",
+            "Never set max_tokens; let it default to the model's maximum",
+            "Set max_tokens to exactly 200 to guarantee short responses"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Setting max_tokens to a reasonable upper bound prevents runaway token usage while accommodating expected variations. Too high (option A) wastes tokens; too low (option D) truncates legitimate responses.",
+          "difficulty": "medium",
+          "tags": ["max-tokens", "cost-control", "parameters"]
+        },
+        {
+          "id": "msu-001-q011",
+          "questionText": "Which scenario would most benefit from using a multimodal model (vision + text)?",
+          "options": [
+            "Processing pure text documents for sentiment analysis",
+            "Generating natural language descriptions, answering questions about images, or extracting information from visual documents like invoices or screenshots",
+            "Simple classification tasks with no visual component",
+            "Multimodal models are inferior to single-modality models"
+          ],
+          "correctAnswerIndex": 1,
+          "explanation": "Multimodal models excel when your input includes images or visual information. Tasks without visual components don't benefit from the added complexity. Multimodal models are specialized tools, not inherently inferior.",
+          "difficulty": "medium",
+          "tags": ["multimodal", "model-selection", "vision"]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "createdAt": "2025-12-17",
+    "totalQuizzes": 3,
+    "totalQuestions": 30,
+    "averageDifficulty": "intermediate",
+    "categories": ["agent-design", "prompt-engineering", "model-selection"],
+    "notes": "These quizzes are pedagogically designed to test genuine understanding of AI development concepts. Each question has a clear correct answer with plausible distractors that reveal common misconceptions. Questions progress from easy (recall/understanding) to hard (application/analysis) within each quiz."
+  }
+}
