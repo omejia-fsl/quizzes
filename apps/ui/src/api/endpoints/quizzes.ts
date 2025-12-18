@@ -1,4 +1,4 @@
-import { api } from './api';
+import { apiFetch } from '../fetch';
 
 export interface QuizAnswer {
   id: string;
@@ -49,6 +49,7 @@ export interface SubmitAnswerDto {
 
 export interface SubmitQuizDto {
   answers: SubmitAnswerDto[];
+  [key: string]: unknown;
 }
 
 export interface QuestionResult {
@@ -76,41 +77,30 @@ export interface QuizFilters {
   difficulty?: string;
   page?: number;
   limit?: number;
+  [key: string]: string | number | boolean | undefined;
 }
 
-export interface AttemptDetail {
-  id: string;
-  quizId: string;
-  score: number;
-  totalQuestions: number;
-  percentage: number;
-  completedAt: string;
-  results: QuestionResult[];
-}
+export const getQuizzes = (filters?: QuizFilters) =>
+  apiFetch<QuizListResponse>('/quizzes', {
+    method: 'GET',
+    params: filters,
+    skipAuth: true,
+  });
 
-export const quizzesApi = {
-  getQuizzes: (filters?: QuizFilters) => {
-    const params = new URLSearchParams();
-    if (filters?.category) params.append('category', filters.category);
-    if (filters?.difficulty) params.append('difficulty', filters.difficulty);
-    if (filters?.page) params.append('page', filters.page.toString());
-    if (filters?.limit) params.append('limit', filters.limit.toString());
+export const getQuizById = (id: string) =>
+  apiFetch<QuizDetail>(`/quizzes/${id}`, {
+    method: 'GET',
+    skipAuth: true,
+  });
 
-    const queryString = params.toString();
-    const endpoint = queryString ? `/quizzes?${queryString}` : '/quizzes';
+export const getQuizCategories = () =>
+  apiFetch<CategoriesResponse>('/quizzes/categories', {
+    method: 'GET',
+    skipAuth: true,
+  });
 
-    return api.get<QuizListResponse>(endpoint, { skipAuth: true });
-  },
-
-  getQuizById: (id: string) =>
-    api.get<QuizDetail>(`/quizzes/${id}`, { skipAuth: true }),
-
-  getCategories: () =>
-    api.get<CategoriesResponse>('/quizzes/categories', { skipAuth: true }),
-
-  submitQuiz: (quizId: string, submission: SubmitQuizDto) =>
-    api.post<QuizResultDto>(`/quizzes/${quizId}/submit`, submission),
-
-  getAttemptById: (attemptId: string) =>
-    api.get<AttemptDetail>(`/attempts/me/${attemptId}`),
-};
+export const submitQuiz = (quizId: string, submission: SubmitQuizDto) =>
+  apiFetch<QuizResultDto>(`/quizzes/${quizId}/submit`, {
+    method: 'POST',
+    body: submission,
+  });
