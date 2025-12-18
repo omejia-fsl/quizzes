@@ -54,8 +54,8 @@ export class QuizzesController {
   async submitQuiz(
     @Param('id') id: string,
     @Body() submission: SubmitQuizDto,
-    @Request() req: { user: { userId: string } },
+    @Request() req: { user: { id: string } },
   ): Promise<QuizResultDto> {
-    return this.quizzesService.submitQuiz(id, req.user.userId, submission);
+    return this.quizzesService.submitQuiz(id, req.user.id, submission);
   }
 }

@@ -154,9 +154,7 @@ export class QuizzesService {
     );
 
     return {
-      attemptId: (
-        attempt._id as unknown as { toString: () => string }
-      ).toString(),
+      attemptId: attempt._id.toString(),
       quizId: (quiz._id as unknown as { toString: () => string }).toString(),
       score: scoringResult.score,
       totalQuestions: scoringResult.totalQuestions,
