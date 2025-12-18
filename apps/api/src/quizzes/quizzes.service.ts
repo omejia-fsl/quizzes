@@ -142,7 +142,7 @@ export class QuizzesService {
 
     const attempt = await this.attemptsService.create(
       {
-        quizId: (quiz._id as unknown as { toString: () => string }).toString(),
+        quizId: String(quiz._id),
         score: scoringResult.score,
         totalQuestions: scoringResult.totalQuestions,
         percentage: scoringResult.percentage,
@@ -155,7 +155,7 @@ export class QuizzesService {
 
     return {
       attemptId: attempt._id.toString(),
-      quizId: (quiz._id as unknown as { toString: () => string }).toString(),
+      quizId: String(quiz._id),
       score: scoringResult.score,
       totalQuestions: scoringResult.totalQuestions,
       percentage: scoringResult.percentage,

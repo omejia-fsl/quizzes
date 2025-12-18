@@ -176,21 +176,5 @@ QuizSchema.methods.toSummaryJSON = function () {
   };
 };
 
-QuizSchema.statics.findActiveQuizzes = function () {
-  return this.find({ isActive: true })
-    .select('title description category difficulty estimatedMinutes questions')
-    .sort({ createdAt: -1 });
-};
-
-QuizSchema.statics.findByCategory = function (category: string) {
-  return this.find({ isActive: true, category })
-    .select('title description category difficulty estimatedMinutes questions')
-    .sort({ createdAt: -1 });
-};
-
-QuizSchema.statics.getCategories = function () {
-  return this.distinct('category', { isActive: true });
-};
-
 QuizSchema.index({ category: 1, isActive: 1 });
 QuizSchema.index({ createdAt: -1 });

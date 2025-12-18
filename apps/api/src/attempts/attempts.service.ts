@@ -2,9 +2,10 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { QuizAttempt, QuizAttemptDocument, Quiz } from '../database/schemas';
 
 export interface UserStats {
@@ -25,6 +26,22 @@ export interface AttemptsListResult {
   page: number;
   limit: number;
   totalPages: number;
+}
+
+export interface AttemptDetail {
+  id: string;
+  quizId: string;
+  score: number;
+  totalQuestions: number;
+  percentage: number;
+  completedAt: Date;
+  results: Array<{
+    questionId: string;
+    selectedAnswerId: string;
+    correctAnswerId: string;
+    isCorrect: boolean;
+    explanation: string;
+  }>;
 }
 
 @Injectable()
@@ -52,10 +69,16 @@ export class AttemptsService {
     },
     userId: string,
   ): Promise<QuizAttemptDocument> {
+    // Fetch the quiz to get its title
+    const quiz = await this.quizModel.findById(result.quizId).exec();
+    if (!quiz) {
+      throw new NotFoundException(`Quiz with ID "${result.quizId}" not found`);
+    }
+
     const attempt = new this.attemptModel({
       userId,
       quizId: result.quizId,
-      quizTitle: 'Quiz',
+      quizTitle: quiz.title,
       score: result.score,
       totalQuestions: result.totalQuestions,
       percentage: result.percentage,
@@ -98,7 +121,11 @@ export class AttemptsService {
     };
   }
 
-  async findById(attemptId: string, userId?: string): Promise<any> {
+  async findById(attemptId: string, userId?: string): Promise<AttemptDetail> {
+    if (!Types.ObjectId.isValid(attemptId)) {
+      throw new BadRequestException('Invalid attempt ID format');
+    }
+
     const attempt = await this.attemptModel.findById(attemptId).exec();
 
     if (!attempt) {
