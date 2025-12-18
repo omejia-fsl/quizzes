@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { QuizAttempt } from '../database/schemas';
+import { QuizAttempt, QuizAttemptDocument, Quiz } from '../database/schemas';
 
 export interface UserStats {
   totalAttempts: number;
@@ -31,7 +31,9 @@ export interface AttemptsListResult {
 export class AttemptsService {
   constructor(
     @InjectModel(QuizAttempt.name)
-    private attemptModel: Model<QuizAttempt>,
+    private attemptModel: Model<QuizAttemptDocument>,
+    @InjectModel(Quiz.name)
+    private quizModel: Model<Quiz>,
   ) {}
 
   async create(
@@ -49,7 +51,7 @@ export class AttemptsService {
       }>;
     },
     userId: string,
-  ): Promise<QuizAttempt> {
+  ): Promise<QuizAttemptDocument> {
     const attempt = new this.attemptModel({
       userId,
       quizId: result.quizId,
@@ -96,7 +98,7 @@ export class AttemptsService {
     };
   }
 
-  async findById(attemptId: string, userId?: string): Promise<QuizAttempt> {
+  async findById(attemptId: string, userId?: string): Promise<any> {
     const attempt = await this.attemptModel.findById(attemptId).exec();
 
     if (!attempt) {
@@ -109,7 +111,40 @@ export class AttemptsService {
       );
     }
 
-    return attempt;
+    const quiz = await this.quizModel.findById(attempt.quizId).exec();
+    if (!quiz) {
+      throw new NotFoundException(`Quiz with ID "${attempt.quizId}" not found`);
+    }
+
+    const results = attempt.answers
+      .map((answer) => {
+        const question = quiz.questions.find(
+          (q) => q._id.toString() === answer.questionId,
+        );
+        if (!question) {
+          return null;
+        }
+
+        const correctAnswer = question.answers.find((a) => a.isCorrect);
+        return {
+          questionId: answer.questionId,
+          selectedAnswerId: answer.answerId,
+          correctAnswerId: correctAnswer?._id.toString() || '',
+          isCorrect: answer.isCorrect,
+          explanation: question.explanation || '',
+        };
+      })
+      .filter((r) => r !== null);
+
+    return {
+      id: attempt._id.toString(),
+      quizId: attempt.quizId,
+      score: attempt.score,
+      totalQuestions: attempt.totalQuestions,
+      percentage: attempt.percentage,
+      completedAt: attempt.createdAt,
+      results,
+    };
   }
 
   async getUserStats(userId: string): Promise<UserStats> {
