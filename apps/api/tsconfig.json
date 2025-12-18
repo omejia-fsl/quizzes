@@ -12,14 +12,19 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "baseUrl": "../../",
+    "paths": {
+      "@quiz-app/shared-models/*": ["./packages/shared-models/src/*"],
+      "@quiz-app/shared-types/*": ["./packages/shared-types/src/*"],
+      "@quiz-app/shared-utils/*": ["./packages/shared-utils/src/*"]
+    },
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "skipLibCheck": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
