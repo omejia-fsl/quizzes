@@ -1,7 +1,16 @@
-import { Module } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import {
+  User,
+  UserSchema,
+  Quiz,
+  QuizSchema,
+  QuizAttempt,
+  QuizAttemptSchema,
+} from './schemas';
 
+@Global()
 @Module({
   imports: [
     MongooseModule.forRootAsync({
@@ -13,6 +22,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Quiz.name, schema: QuizSchema },
+      { name: QuizAttempt.name, schema: QuizAttemptSchema },
+    ]),
   ],
+  exports: [MongooseModule],
 })
 export class DatabaseModule {}
