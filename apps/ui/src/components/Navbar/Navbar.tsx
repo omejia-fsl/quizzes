@@ -3,20 +3,29 @@ import { Menu, X, User, Moon, Sun, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useTheme } from '../../hooks/useTheme.ts';
-import { useLogoutMutation } from '../../api/auth.ts';
 import { Button } from '../Button/Button';
+import { useLogoutMutation } from '../../api/mutations/auth.ts';
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, clearAuth } = useAuth();
   const { isDark, toggleTheme } = useTheme();
-  const logoutMutation = useLogoutMutation();
+  const { mutate: postLogout, isPending: logoutIsPending } =
+    useLogoutMutation();
 
   const navLinks = [
     { to: '/', label: 'Home' },
     { to: '/quizzes', label: 'Quizzes' },
     ...(isAuthenticated ? [{ to: '/dashboard', label: 'Dashboard' }] : []),
   ];
+
+  const handleLogout = () => {
+    postLogout(undefined, {
+      onSuccess: () => {
+        clearAuth();
+      },
+    });
+  };
 
   return (
     <nav
@@ -26,7 +35,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         <Link
           to="/"
-          className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
+          className="text-xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
         >
           QuizAI
         </Link>
@@ -70,8 +79,8 @@ export const Navbar = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => logoutMutation.mutate()}
-                disabled={logoutMutation.isPending}
+                onClick={handleLogout}
+                disabled={logoutIsPending}
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
@@ -163,10 +172,10 @@ export const Navbar = () => {
                   variant="ghost"
                   fullWidth
                   onClick={() => {
-                    logoutMutation.mutate();
+                    handleLogout();
                     setMobileMenuOpen(false);
                   }}
-                  disabled={logoutMutation.isPending}
+                  disabled={logoutIsPending}
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout

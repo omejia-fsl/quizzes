@@ -4,6 +4,12 @@
   "private": true,
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "exports": {
+    "./query-keys": "./src/query-keys/index.ts",
+    "./query-keys/*": "./src/query-keys/*.ts",
+    "./api-routes": "./src/api-routes/index.ts",
+    "./api-routes/*": "./src/api-routes/*.ts"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

@@ -31,4 +31,10 @@ export class AuthController {
       user: req.user,
     };
   }
+
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  async logout() {
+    return this.authService.logout();
+  }
 }

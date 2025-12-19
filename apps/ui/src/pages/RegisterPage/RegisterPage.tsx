@@ -3,11 +3,11 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useEffect } from 'react';
-import { useRegisterMutation } from '../../api/auth.ts';
 import { useAuth } from '../../hooks/useAuth';
 import { Input } from '../../components/Input/Input';
 import { Button } from '../../components/Button/Button';
 import { CheckCircle } from 'lucide-react';
+import { useRegisterMutation } from '../../api/mutations/auth.ts';
 
 interface RegisterFormData {
   username: string;
@@ -43,8 +43,9 @@ const registerSchema = yup.object({
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const registerMutation = useRegisterMutation();
+  const { isAuthenticated, setAuth } = useAuth();
+  const { mutate: postRegister, isPending: registerIsPending } =
+    useRegisterMutation();
 
   const {
     register,
@@ -62,9 +63,13 @@ export const RegisterPage = () => {
   }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data: RegisterFormData) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { confirmPassword, ...credentials } = data;
-    registerMutation.mutate(credentials);
+    const { confirmPassword: _, ...credentials } = data;
+    postRegister(credentials, {
+      onSuccess: (response) => {
+        setAuth(response.user, response.access_token);
+        void navigate({ to: '/dashboard' });
+      },
+    });
   };
 
   const password = watch('password');
@@ -190,9 +195,9 @@ export const RegisterPage = () => {
               type="submit"
               variant="primary"
               fullWidth
-              isLoading={isSubmitting || registerMutation.isPending}
+              isLoading={isSubmitting || registerIsPending}
             >
-              {isSubmitting || registerMutation.isPending
+              {isSubmitting || registerIsPending
                 ? 'Creating account...'
                 : 'Create Account'}
             </Button>

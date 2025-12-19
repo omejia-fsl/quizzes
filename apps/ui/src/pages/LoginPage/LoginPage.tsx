@@ -3,11 +3,11 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useEffect } from 'react';
-import { useLoginMutation } from '../../api/auth.ts';
 import { useAuth } from '../../hooks/useAuth';
 import { Input } from '../../components/Input/Input';
 import { Button } from '../../components/Button/Button';
-import type { LoginCredentials } from '../../types';
+import type { LoginCredentials } from '@quiz-app/shared-models/models/auth';
+import { useLoginMutation } from '../../api/mutations/auth.ts';
 
 const loginSchema = yup.object({
   email: yup
@@ -22,8 +22,8 @@ const loginSchema = yup.object({
 
 export const LoginPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const loginMutation = useLoginMutation();
+  const { isAuthenticated, setAuth } = useAuth();
+  const { mutate: postLogin, isPending: loginIsPending } = useLoginMutation();
 
   const {
     register,
@@ -40,7 +40,12 @@ export const LoginPage = () => {
   }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data: LoginCredentials) => {
-    loginMutation.mutate(data);
+    postLogin(data, {
+      onSuccess: (credentials) => {
+        setAuth(credentials.user, credentials.access_token);
+        void navigate({ to: '/dashboard' });
+      },
+    });
   };
 
   return (
@@ -77,11 +82,9 @@ export const LoginPage = () => {
               type="submit"
               variant="primary"
               fullWidth
-              isLoading={isSubmitting || loginMutation.isPending}
+              isLoading={isSubmitting || loginIsPending}
             >
-              {isSubmitting || loginMutation.isPending
-                ? 'Signing in...'
-                : 'Sign In'}
+              {isSubmitting || loginIsPending ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
 
