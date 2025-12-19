@@ -4,7 +4,7 @@ import { QueryKeys } from '@quiz-app/shared-types/query-keys';
 
 export function useAttemptQuery(attemptId: string) {
   return useQuery({
-    queryKey: [QueryKeys.ATTEMPT],
+    queryKey: [QueryKeys.ATTEMPT, attemptId],
     queryFn: () => getAttemptById(attemptId),
     enabled: !!attemptId,
   });

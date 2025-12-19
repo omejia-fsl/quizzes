@@ -9,14 +9,14 @@ import { QueryKeys } from '@quiz-app/shared-types/query-keys';
 
 export function useQuizzesQuery(filters?: QuizFilters) {
   return useQuery({
-    queryKey: [QueryKeys.QUIZZES],
+    queryKey: [QueryKeys.QUIZZES, filters],
     queryFn: () => getQuizzes(filters),
   });
 }
 
 export function useQuizQuery(id: string) {
   return useQuery({
-    queryKey: [QueryKeys.QUIZ],
+    queryKey: [QueryKeys.QUIZ, id],
     queryFn: () => getQuizById(id),
     enabled: !!id,
   });

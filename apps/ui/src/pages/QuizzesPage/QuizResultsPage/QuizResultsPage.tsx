@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
-import { useAttempt, useQuiz } from '../../../hooks/useQuizzes';
+import { useAttemptQuery } from '../../../api/queries/attempts.ts';
+import { useQuizQuery } from '../../../api/queries/quizzes.ts';
 
 interface QuizResultsProps {
   quizId: string;
@@ -11,12 +12,12 @@ export const QuizResultsPage = ({ quizId, attemptId }: QuizResultsProps) => {
     data: attempt,
     isLoading: attemptLoading,
     error: attemptError,
-  } = useAttempt(attemptId);
+  } = useAttemptQuery(attemptId);
   const {
     data: quiz,
     isLoading: quizLoading,
     error: quizError,
-  } = useQuiz(quizId);
+  } = useQuizQuery(quizId);
 
   const isLoading = attemptLoading || quizLoading;
 
